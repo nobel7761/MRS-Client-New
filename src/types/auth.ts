@@ -4,12 +4,28 @@ export enum UserRole {
   USER = "USER",
 }
 
+export enum UserStatus {
+  ACTIVE = "ACTIVE",
+  INACTIVE = "INACTIVE",
+}
+
+export enum UserType {
+  MARKETING = "MARKETING",
+  HR = "HR",
+  OPERATIONS = "OPERATIONS",
+  EMPLOYEE = "EMPLOYEE",
+  OWNER = "OWNER",
+}
+
 export interface User {
-  id: string;
+  _id: string;
   email: string;
   phone?: string;
   role: UserRole;
-  name: string;
+  firstName: string;
+  lastName: string;
+  status: UserStatus;
+  userType: UserType;
 }
 
 export interface LoginCredentials {
