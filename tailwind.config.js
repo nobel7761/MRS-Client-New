@@ -8,10 +8,12 @@ module.exports = {
   theme: {
     extend: {
       colors: {
+        primary: "#6952E0",
+        secondary: "#DBFD7D",
+        brandColorPrimary: "#67BC46",
+        brandColorSecondary: "#404448",
         facebook: "#2176FF",
         whatsapp: "#46EE65",
-        primary: "#007FFF",
-        backgroundColor: "#FDF8DE",
       },
     },
   },

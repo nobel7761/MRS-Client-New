@@ -1,8 +1,9 @@
 "use client";
 
+import PageLoader from "@/components/PageLoader";
 import { useAuth } from "@/contexts/AuthContext";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 export default function PublicLayout({
   children,
@@ -22,7 +23,7 @@ export default function PublicLayout({
   }, [isAuthenticated, isLoading, router]);
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <PageLoader />;
   }
 
   return (

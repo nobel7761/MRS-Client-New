@@ -5,6 +5,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { UserRole } from "@/types/auth";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import PageLoader from "@/components/PageLoader";
 
 export default function AdminLayout({
   children,
@@ -13,6 +14,7 @@ export default function AdminLayout({
 }) {
   const { user, isAuthenticated, isLoading } = useAuth();
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const [showLoader, setShowLoader] = useState(true);
   const router = useRouter();
 
   useEffect(() => {
@@ -26,7 +28,7 @@ export default function AdminLayout({
   }, [isAuthenticated, isLoading, user, router]);
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <PageLoader />;
   }
 
   if (!isAuthenticated || user?.role === UserRole.USER) {

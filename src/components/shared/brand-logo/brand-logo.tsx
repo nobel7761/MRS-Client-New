@@ -1,4 +1,5 @@
 import Image from "next/image";
+import brandLogo from "@/public/brand-logo.png";
 
 const BrandLogo = ({
   imageClassName,
@@ -10,11 +11,11 @@ const BrandLogo = ({
   return (
     <div className="flex items-center">
       <Image
-        src="/brand-logo.png"
+        src={brandLogo}
         alt="mrs-logo"
-        height={2400}
-        width={2400}
-        className={`w-[3rem] h-[3rem] object-contain ${imageClassName}`}
+        quality={100}
+        priority
+        className={`object-contain ${imageClassName}`}
       />
       <p className={`${textClassName}`}>Manpower Research & Synchronization</p>
     </div>
