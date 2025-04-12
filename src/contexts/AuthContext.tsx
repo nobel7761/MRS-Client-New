@@ -14,6 +14,7 @@ import {
   AuthState,
   LoginCredentials,
   User,
+  UserRole,
 } from "@/types/auth";
 import client from "@/lib/api";
 import Cookies from "js-cookie";
@@ -70,7 +71,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       });
 
       // Redirect based on role
-      const redirectPath = user.role === "USER" ? "/" : "/admin";
+      const redirectPath = user.role === UserRole.USER ? "/" : "/admin";
       router.push(redirectPath);
 
       toast.success("Login successful");

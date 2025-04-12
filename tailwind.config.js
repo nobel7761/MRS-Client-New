@@ -6,7 +6,14 @@ module.exports = {
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        facebook: "#2176FF",
+        whatsapp: "#46EE65",
+        primary: "#007FFF",
+        backgroundColor: "#FDF8DE",
+      },
+    },
   },
   plugins: [],
 };

@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-
+import { UserRole } from "@/types/auth";
 export function middleware(request: NextRequest) {
   const token = request.cookies.get("token")?.value;
   const user = request.cookies.get("user")?.value;
@@ -16,7 +16,7 @@ export function middleware(request: NextRequest) {
   if (publicRoutes.includes(pathname)) {
     if (token && user) {
       const parsedUser = JSON.parse(user);
-      if (parsedUser.role === "USER") {
+      if (parsedUser.role === UserRole.USER) {
         return NextResponse.redirect(new URL("/", request.url));
       } else {
         return NextResponse.redirect(new URL("/admin", request.url));
@@ -34,7 +34,10 @@ export function middleware(request: NextRequest) {
 
   // Admin routes protection
   if (pathname.startsWith("/admin")) {
-    if (parsedUser.role !== "ADMIN" && parsedUser.role !== "SUPER_ADMIN") {
+    if (
+      parsedUser.role !== UserRole.ADMIN &&
+      parsedUser.role !== UserRole.SUPER_ADMIN
+    ) {
       return NextResponse.redirect(new URL("/", request.url));
     }
   }

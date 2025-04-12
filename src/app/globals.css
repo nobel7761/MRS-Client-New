@@ -15,3 +15,82 @@
     --background-end-rgb: 0, 0, 0;
   }
 }
+
+/* Add custom tooltip styles */
+[title] {
+  position: relative;
+}
+
+[title]:hover::after {
+  content: attr(title);
+  position: absolute;
+  left: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: #1f2937;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  margin-left: 8px;
+  font-size: 14px;
+  white-space: nowrap;
+  z-index: 50;
+}
+
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #111827 #173f66;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #173f66;
+  border-radius: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #111827;
+  border-radius: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #6b7280;
+}
+
+.react-select-container .react-select__input-container,
+.react-select-container .react-select__placeholder,
+.react-select-container .react-select__single-value {
+  color: white !important;
+}
+
+/* React Date Picker */
+.react-date-picker {
+  background-color: #374151;
+  border-radius: 0.375rem;
+}
+
+.react-date-picker__wrapper {
+  border: none !important;
+}
+
+.react-date-picker__inputGroup__input {
+  color: white;
+}
+
+.react-date-picker__calendar .react-calendar {
+  background-color: #374151;
+  color: white;
+  border: 1px solid #4b5563;
+  border-radius: 0.375rem;
+}
+
+.react-calendar__tile--active {
+  background-color: #3b82f6 !important;
+}
+
+.react-calendar__tile:hover {
+  background-color: #4b5563;
+}
