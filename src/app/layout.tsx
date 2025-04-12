@@ -8,8 +8,8 @@ const inter = Inter({ subsets: ["latin"] });
 const playfair = Playfair_Display({ subsets: ["latin"] });
 
 export const metadata = {
-  title: "MRS Client",
-  description: "MRS Client Application",
+  title: "MRS",
+  description: "Manpower Research & Synchronization",
 };
 
 export default function RootLayout({
