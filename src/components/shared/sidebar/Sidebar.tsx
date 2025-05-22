@@ -5,17 +5,15 @@ import { usePathname, useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import { FiLogOut } from "react-icons/fi";
 import { sidebarItems } from "./sidebar.items";
-import BrandLogo from "../brand-logo/brand-logo";
-import { Playfair_Display } from "next/font/google";
+import backgroundImage from "@/public/background.jpg";
 import CustomDropdown, {
   NavigationItem,
 } from "../custom-components/CustomDropdown";
 import { motion, AnimatePresence } from "framer-motion";
 import { MdKeyboardArrowLeft } from "react-icons/md";
 import { MdKeyboardArrowRight } from "react-icons/md";
-import { FaUserShield } from "react-icons/fa";
-
-const playfair = Playfair_Display({ subsets: ["latin"] });
+import logo from "@/public/nicaa-logo-white-bg.png";
+import Image from "next/image";
 
 interface SidebarProps {
   isCollapsed: boolean;
@@ -25,7 +23,7 @@ interface SidebarProps {
 const Sidebar = ({ isCollapsed, setIsCollapsed }: SidebarProps) => {
   const pathname = usePathname();
   const router = useRouter();
-  const { user, logout } = useAuth();
+  const { logout } = useAuth();
 
   const handleLogout = () => {
     logout();
@@ -34,13 +32,14 @@ const Sidebar = ({ isCollapsed, setIsCollapsed }: SidebarProps) => {
 
   return (
     <aside
-      className={`bg-[#173F66] flex flex-col fixed h-screen transition-all duration-300 ${
+      className={` bg-cover bg-center bg-no-repeat flex flex-col fixed h-screen transition-all duration-300 py-4 ${
         isCollapsed ? "w-16" : "w-64"
       }`}
+      style={{ backgroundImage: `url(${backgroundImage.src})` }}
     >
       <Link href="/admin" className="cursor-pointer">
         <div
-          className={`h-[8vh] p-4 flex items-center ${
+          className={`p-4 flex items-center justify-center gap-x-4 border-b border-gray-200 ${
             isCollapsed ? "justify-center" : "justify-start"
           } overflow-hidden`}
         >
@@ -52,19 +51,25 @@ const Sidebar = ({ isCollapsed, setIsCollapsed }: SidebarProps) => {
             }}
             transition={{ duration: 0.3 }}
           >
-            <FaUserShield className="w-[2.5rem] h-[2.5rem] text-white" />
+            <Image
+              src={logo}
+              alt="NICAA"
+              width={500}
+              height={500}
+              className="w-full h-full"
+            />
           </motion.div>
 
           <AnimatePresence>
             {!isCollapsed && (
               <motion.span
-                className={`${playfair.className} text-[1.5rem] text-white font-extrabold tracking-wider`}
+                className={`text-[2.5rem] text-white font-extrabold tracking-wider`}
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -20 }}
                 transition={{ duration: 0.2 }}
               >
-                Dashboard
+                NICAA
               </motion.span>
             )}
           </AnimatePresence>
@@ -84,58 +89,34 @@ const Sidebar = ({ isCollapsed, setIsCollapsed }: SidebarProps) => {
       </button>
 
       <nav className="flex-1 text-sm text-white overflow-y-auto custom-scrollbar">
-        <ul className="space-y-4 py-4">
-          {sidebarItems.map((category) => (
-            <li key={category.category}>
-              {!isCollapsed && (
-                <div className="px-4 py-2 text-xs font-semibold text-gray-400">
-                  {category.category}
-                </div>
-              )}
-              <ul>
-                {category.items.map((item) => {
-                  const isActive = pathname === item.href;
-                  const hasChildren =
-                    "children" in item &&
-                    Array.isArray(item.children) &&
-                    item.children.length > 0;
-
-                  return (
-                    <li key={item.name} className="mx-2">
-                      {hasChildren ? (
-                        <CustomDropdown
-                          items={item as NavigationItem}
-                          pathname={pathname}
-                          isCollapsed={isCollapsed}
-                        />
-                      ) : (
-                        <Link
-                          href={item.href || "#"}
-                          className={`p-3 cursor-pointer flex items-center rounded-md ${
-                            isActive
-                              ? "bg-[#EBF5FF] text-[#173F66] font-semibold"
-                              : "hover:bg-[#EBF5FF]/10"
-                          } ${isCollapsed ? "justify-center" : ""}`}
-                          {...(isCollapsed ? { title: item.name } : {})}
-                        >
-                          <span
-                            className={`${
-                              isCollapsed
-                                ? "text-[1.5rem] flex items-center justify-center w-6"
-                                : "mr-3"
-                            }`}
-                          >
-                            {item.icon}
-                          </span>
-                          {!isCollapsed && item.name}
-                        </Link>
-                      )}
-                    </li>
-                  );
-                })}
-              </ul>
-            </li>
-          ))}
+        <ul className="space-y-1 py-4">
+          {sidebarItems.map((item) => {
+            const isActive = pathname === item.href;
+            return (
+              <li key={item.name} className="mx-2">
+                <Link
+                  href={item.href}
+                  className={`p-3 cursor-pointer flex items-center rounded-md ${
+                    isActive
+                      ? "bg-[#EBF5FF] text-[#173F66] font-semibold"
+                      : "hover:bg-[#EBF5FF]/20"
+                  } ${isCollapsed ? "justify-center" : ""}`}
+                  {...(isCollapsed ? { title: item.name } : {})}
+                >
+                  <span
+                    className={`${
+                      isCollapsed
+                        ? "text-[1.5rem] flex items-center justify-center w-6"
+                        : "mr-3"
+                    }`}
+                  >
+                    {item.icon}
+                  </span>
+                  {!isCollapsed && item.name}
+                </Link>
+              </li>
+            );
+          })}
         </ul>
       </nav>
 

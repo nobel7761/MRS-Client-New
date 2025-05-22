@@ -1,16 +1,15 @@
 import { AuthProvider } from "@/contexts/AuthContext";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { Inter, Playfair_Display } from "next/font/google";
+import { Inter } from "next/font/google";
 import "./globals.css";
 import PageLoader from "@/components/PageLoader";
 
 const inter = Inter({ subsets: ["latin"] });
-const playfair = Playfair_Display({ subsets: ["latin"] });
 
 export const metadata = {
-  title: "MRS",
-  description: "Manpower Research & Synchronization",
+  title: "NICAA",
+  description: "National Ideal College Alumni Association",
 };
 
 export default function RootLayout({

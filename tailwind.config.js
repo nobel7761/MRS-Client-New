@@ -8,12 +8,26 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        primary: "#6952E0",
+        primary: "#D00101",
         secondary: "#DBFD7D",
         brandColorPrimary: "#67BC46",
         brandColorSecondary: "#404448",
         facebook: "#2176FF",
         whatsapp: "#46EE65",
+      },
+      keyframes: {
+        "spin-slow": {
+          "0%": { transform: "rotate(0deg)" },
+          "100%": { transform: "rotate(360deg)" },
+        },
+        "spin-slower": {
+          "0%": { transform: "rotate(0deg)" },
+          "100%": { transform: "rotate(360deg)" },
+        },
+      },
+      animation: {
+        "spin-slow": "spin-slow 15s linear infinite",
+        "spin-slower": "spin-slower 20s linear infinite",
       },
     },
   },

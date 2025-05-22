@@ -12,7 +12,12 @@ export function middleware(request: NextRequest) {
   }
 
   // Public routes that don't require authentication
-  const publicRoutes = ["/login", "/register"];
+  const publicRoutes = [
+    "/",
+    "/login",
+    "/register",
+    "/representative-registration-reunion-2026",
+  ];
   if (publicRoutes.includes(pathname)) {
     if (token && user) {
       const parsedUser = JSON.parse(user);

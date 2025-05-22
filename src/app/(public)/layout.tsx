@@ -1,9 +1,12 @@
 "use client";
 
 import PageLoader from "@/components/PageLoader";
+import FooterComponent from "@/components/shared/footer/footer";
+import MainNavbar from "@/components/shared/navbar/main-navbar";
 import { useAuth } from "@/contexts/AuthContext";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
+import backgroundImage from "@/public/background.jpg";
 
 export default function PublicLayout({
   children,
@@ -28,7 +31,16 @@ export default function PublicLayout({
 
   return (
     <div className="flex flex-col overflow-y-auto min-h-screen">
-      <section>{children}</section>
+      <section>
+        <div
+          className="bg-cover bg-center bg-no-repeat"
+          style={{ backgroundImage: `url(${backgroundImage.src})` }}
+        >
+          <MainNavbar />
+        </div>
+        {children}
+        <FooterComponent />
+      </section>
     </div>
   );
 }

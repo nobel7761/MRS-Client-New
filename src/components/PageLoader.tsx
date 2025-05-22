@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import BrandLogo from "./shared/brand-logo/brand-logo";
+import backgroundImage from "@/public/background.jpg";
 
 const PageLoader = () => {
   const textRef = useRef<HTMLDivElement>(null);
@@ -69,7 +70,10 @@ const PageLoader = () => {
   }, []);
 
   return (
-    <div className="absolute top-0 left-0 h-[100%] w-[100%] flex flex-col justify-center items-center bg-secondary bg-cover bg-center loading-page">
+    <div
+      className="fixed top-0 left-0 h-[100vh] w-[100vw] flex flex-col justify-center items-center loading-page z-[9999] bg-cover bg-center bg-no-repeat"
+      style={{ backgroundImage: `url(${backgroundImage.src})` }}
+    >
       <div className="brand-logo w-[15rem] h-[15rem] flex items-center justify-center">
         <BrandLogo imageClassName="w-full h-full" />
       </div>
@@ -77,9 +81,9 @@ const PageLoader = () => {
       <div className="min-h-[60px] flex items-center">
         <div
           ref={textRef}
-          className="text-3xl font-bold uppercase [letter-spacing:5px] logo-name bg-gradient-to-r from-brandColorPrimary to-brandColorSecondary bg-clip-text text-transparent opacity-0"
+          className="text-3xl font-bold uppercase [letter-spacing:5px] logo-name text-white bg-clip-text text-transparent opacity-0"
         >
-          Manpower Research & Synchronization
+          National Ideal College Alumni Association
         </div>
       </div>
     </div>

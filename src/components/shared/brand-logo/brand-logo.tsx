@@ -1,5 +1,5 @@
 import Image from "next/image";
-import brandLogo from "@/public/brand-logo.png";
+import brandLogo from "@/public/nicaa-logo-white-bg.png";
 
 const BrandLogo = ({
   imageClassName,
@@ -12,12 +12,14 @@ const BrandLogo = ({
     <div className="flex items-center">
       <Image
         src={brandLogo}
-        alt="mrs-logo"
+        alt="nicaa-logo"
         quality={100}
         priority
         className={`object-contain ${imageClassName}`}
       />
-      <p className={`${textClassName}`}>Manpower Research & Synchronization</p>
+      <p className={`${textClassName}`}>
+        National Ideal College Alumni Association
+      </p>
     </div>
   );
 };

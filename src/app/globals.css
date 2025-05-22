@@ -1,12 +1,8 @@
+@import url("https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&display=swap");
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-:root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
-}
 
 @media (prefers-color-scheme: dark) {
   :root {
@@ -18,7 +14,7 @@
 
 .custom-scrollbar {
   scrollbar-width: thin;
-  scrollbar-color: #111827 #173f66;
+  scrollbar-color: white transparent;
 }
 
 .custom-scrollbar::-webkit-scrollbar {
@@ -26,15 +22,27 @@
 }
 
 .custom-scrollbar::-webkit-scrollbar-track {
-  background: #173f66;
+  background: transparent;
   border-radius: 4px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: #111827;
+  background: white;
   border-radius: 4px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: #6b7280;
+  background: #e5e7eb;
+}
+
+@keyframes ctaarrow {
+  0% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(20px);
+  }
+  100% {
+    transform: translateX(0);
+  }
 }
