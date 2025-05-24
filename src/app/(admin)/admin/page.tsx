@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { FiUsers, FiDollarSign, FiShoppingCart } from "react-icons/fi";
+import { FiUsers } from "react-icons/fi";
 import backgroundImage from "@/public/background.jpg";
 import { useApi } from "@/hooks/useApi";
 import {
@@ -17,6 +17,7 @@ import {
   Bar,
 } from "recharts";
 import { ResponsiveContainer } from "recharts";
+import { FaFemale, FaMale } from "react-icons/fa";
 
 interface DashboardStats {
   totalSubmissions: number;
@@ -115,7 +116,7 @@ export default function AdminDashboard() {
             <div className="p-5">
               <div className="flex items-center">
                 <div className="flex-shrink-0">
-                  <FiDollarSign className="h-6 w-6 text-primary" />
+                  <FaMale className="h-6 w-6 text-primary" />
                 </div>
                 <div className="ml-5 w-0 flex-1">
                   <dl>
@@ -142,7 +143,7 @@ export default function AdminDashboard() {
             <div className="p-5">
               <div className="flex items-center">
                 <div className="flex-shrink-0">
-                  <FiDollarSign className="h-6 w-6 text-primary" />
+                  <FaFemale className="h-6 w-6 text-primary" />
                 </div>
                 <div className="ml-5 w-0 flex-1">
                   <dl>
