@@ -35,11 +35,13 @@ const AnimatedIconTitleCard: React.FC<AnimatedIconTitleCardProps> = ({
         <div className="relative z-10">{icon}</div>
       </div>
       <div className="w-[75%]">
-        <h3 className={`text-xl ${archivo.medium500.className} ${titleClass}`}>
+        <h3
+          className={`md:text-xl text-base ${archivo.medium500.className} ${titleClass}`}
+        >
           {title}
         </h3>
         <p
-          className={`text-base text-[#666666] ${archivo.regular400.className} ${descriptionClass}`}
+          className={`md:text-base text-sm text-[#666666] ${archivo.regular400.className} ${descriptionClass}`}
         >
           {description}
         </p>

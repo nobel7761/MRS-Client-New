@@ -27,7 +27,9 @@ const FooterBottomPart = () => {
         </div>
 
         <div className="flex items-center gap-4">
-          <p className="text-white text-2xl font-bold">Follow our socials</p>
+          <p className="text-white md:text-2xl text-xl font-bold">
+            Follow our socials
+          </p>
           <div className="flex items-center gap-2">
             <Link
               href="https://www.facebook.com/NationalIdealCollegeAlumniAssociation"

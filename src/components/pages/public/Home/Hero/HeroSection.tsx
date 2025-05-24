@@ -22,33 +22,33 @@ const HeroSection = () => {
         />
         <div className="my-4">
           <p
-            className={`${archivo.bold700.className} md:text-[4rem] text-[30px] md:w-[65%] w-[80%] mx-auto`}
+            className={`${archivo.bold700.className} md:text-[4rem] text-[26px] md:w-[65%] w-[80%] mx-auto`}
           >
             National Ideal College
           </p>
           <p
-            className={`${archivo.bold700.className} md:text-[4rem] text-[30px] md:w-[65%] w-[80%] mx-auto text-secondary md:-mt-5`}
+            className={`${archivo.bold700.className} md:text-[4rem] text-[26px] md:w-[65%] w-[80%] mx-auto text-secondary md:-mt-5`}
           >
             Alumni Association
           </p>
         </div>
 
         <div
-          className={`${archivo.thin300.className} flex md:flex-row flex-col justify-center items-center md:gap-16`}
+          className={`${archivo.thin300.className} flex md:flex-row flex-col justify-center items-center md:gap-16 gap-y-2`}
         >
-          <div className={`flex items-center gap-2`}>
+          <div className={`flex items-center gap-2 md:text-base text-sm`}>
             <div className="w-4 h-4 rounded-full bg-secondary flex justify-center items-center">
               <TiTick className="text-black" />
             </div>
             <p>সেই পুরোনো বেঞ্চ, সেই বন্ধুত্ব - আবারও জীবন্ত হোক!</p>
           </div>
-          <div className="flex items-center gap-2">
+          <div className={`flex items-center gap-2 md:text-base text-sm`}>
             <div className="w-4 h-4 rounded-full bg-secondary flex justify-center items-center">
               <TiTick className="text-black" />
             </div>
             <p>সেই কৈশোর, সেই দিন, সেই আমরা!</p>
           </div>
-          <div className="flex items-center gap-2">
+          <div className={`flex items-center gap-2 md:text-base text-sm`}>
             <div className="w-4 h-4 rounded-full bg-secondary flex justify-center items-center">
               <TiTick className="text-black" />
             </div>

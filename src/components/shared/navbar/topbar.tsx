@@ -28,7 +28,7 @@ const TopBar = () => {
           <div className="md:w-1/2 w-full">
             {/* Topbar Social Links Start */}
 
-            <ul className="flex justify-between md:pl-32 items-center gap-4 font-medium">
+            <ul className="flex justify-between md:pl-32 items-center gap-4 font-medium text-xs md:text-sm">
               <li>
                 <Link
                   href="https://www.facebook.com/NationalIdealCollegeAlumniAssociation"

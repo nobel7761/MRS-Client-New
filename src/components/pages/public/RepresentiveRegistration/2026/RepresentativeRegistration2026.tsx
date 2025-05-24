@@ -96,7 +96,7 @@ const RepresentativeRegistration2026Component = () => {
       <div className="w-[90%] mx-auto md:pt-24 py-5">
         <div className="flex md:flex-row flex-col gap-x-10">
           <div className="md:w-1/2 w-full">
-            <p className="text-[35px] font-extrabold text-primary">
+            <p className="md:text-[35px] text-[20px] font-extrabold text-primary">
               Be the Voice of Your Batch – Join the NIC 25th Anniversary Grand
               Reunion as a Representative!
             </p>
@@ -129,7 +129,7 @@ const RepresentativeRegistration2026Component = () => {
               </div>
 
               {/* HSC Year and Group in same line */}
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid md:grid-cols-2 grid-cols-1 gap-4">
                 {/* HSC Year Dropdown */}
                 <div>
                   <label className="block text-gray-700 mb-2">
@@ -240,7 +240,7 @@ const RepresentativeRegistration2026Component = () => {
               </div>
 
               {/* Gender and Phone in same line */}
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid md:grid-cols-2 grid-cols-1 gap-4">
                 {/* Gender Dropdown */}
                 <div>
                   <label className="block text-gray-700 mb-2">

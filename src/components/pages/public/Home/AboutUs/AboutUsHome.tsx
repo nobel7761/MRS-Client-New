@@ -50,9 +50,9 @@ const AboutUsImages = () => {
   const formattedYears = yearsOfExperience.toString().padStart(2, "0");
 
   return (
-    <div className="relative w-full min-h-[600px]">
+    <div className="relative w-full md:min-h-[600px] min-h-[150px]">
       {/* Spinning Logo on top left */}
-      <div className="absolute md:top-2 top-[30%] md:left-16 left-5 z-40">
+      <div className="absolute md:top-2 top-[20%] md:left-16 left-5 z-40">
         <SpinningLogo />
       </div>
 
@@ -73,7 +73,7 @@ const AboutUsImages = () => {
       </div>
 
       {/* About Image Box 2 */}
-      <div className="absolute md:top-0 top-10 md:right-0 right-4 w-[55%] z-10">
+      <div className="md:block hidden absolute md:top-0 top-10 md:right-0 right-4 w-[55%] z-10">
         <div className="relative overflow-hidden rounded-[20px] group">
           <figure className="transform transition-transform duration-500 hover:scale-105">
             <Image
@@ -89,7 +89,7 @@ const AboutUsImages = () => {
       </div>
 
       {/* About Image Box 3 */}
-      <div className="absolute bottom-0 left-0 w-[60%] z-30">
+      <div className="md:block hidden absolute bottom-0 left-0 w-[60%] z-30">
         <div className="relative overflow-hidden rounded-[30px] border-[15px] border-white group">
           <figure className="transform transition-transform duration-500 hover:scale-105">
             <Image
@@ -105,7 +105,7 @@ const AboutUsImages = () => {
       </div>
 
       {/* Years of Togetherness Card anchored bottom right */}
-      <div className="absolute w-[35%] md:bottom-6 bottom-3 md:right-5 right-4 text-black rounded-[20px] group overflow-hidden">
+      <div className="absolute md:w-[35%] w-[50%] md:bottom-6 bottom-2 md:right-5 right-4 text-black rounded-[20px] group overflow-hidden bg-blue-600">
         {/* Background image */}
         <div
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
@@ -140,14 +140,14 @@ const AboutUsHomeComponent = () => {
           />
 
           <p
-            className={`${archivo.semibold600.className} text-black text-[2.7rem] leading-[3rem] tracking-[-0.02em] my-5`}
+            className={`${archivo.semibold600.className} text-black md:text-[2.7rem] text-[1.8rem] md:leading-[3rem] tracking-[-0.02em] my-5`}
           >
             <span className="text-primary">Engaging</span> all former & current
             students <span className="text-primary">together</span>
           </p>
 
           <p
-            className={`${archivo.regular400.className} text-[#666666] text-[1.05rem] leading-[1.8rem] mb-5`}
+            className={`${archivo.regular400.className} text-[#666666] md:text-[1.05rem] text-[14px] md:leading-[1.8rem] mb-5`}
           >
             National Ideal College Alumni Association is a vibrant community
             dedicated to fostering lifelong connections among alumni, current

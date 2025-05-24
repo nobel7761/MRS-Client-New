@@ -92,7 +92,7 @@ const PageLoader = () => {
         </div>
         <div
           ref={mobileTextRef}
-          className="md:hidden block text-center text-lg font-bold uppercase [letter-spacing:5px] logo-name text-white bg-clip-text text-transparent opacity-0"
+          className="md:hidden block text-center text-base font-bold uppercase [letter-spacing:5px] logo-name text-white bg-clip-text text-transparent opacity-0"
         >
           National Ideal College <br /> Alumni Association
         </div>
