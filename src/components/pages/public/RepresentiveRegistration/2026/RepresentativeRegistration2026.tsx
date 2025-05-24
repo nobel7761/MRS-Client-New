@@ -93,9 +93,9 @@ const RepresentativeRegistration2026Component = () => {
   return (
     <div>
       {/* bottom part */}
-      <div className="w-[90%] mx-auto pt-24">
-        <div className="flex justify-between gap-x-10">
-          <div className="w-1/2">
+      <div className="w-[90%] mx-auto md:pt-24 py-5">
+        <div className="flex md:flex-row flex-col gap-x-10">
+          <div className="md:w-1/2 w-full">
             <p className="text-[35px] font-extrabold text-primary">
               Be the Voice of Your Batch – Join the NIC 25th Anniversary Grand
               Reunion as a Representative!
@@ -106,7 +106,7 @@ const RepresentativeRegistration2026Component = () => {
               className="w-full"
             />
           </div>
-          <div className="w-1/2">
+          <div className="md:w-1/2 w-full">
             <form
               onSubmit={handleSubmit(handleFormSubmit)}
               className="space-y-6"
@@ -339,8 +339,10 @@ const RepresentativeRegistration2026Component = () => {
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-primary"
                 />
                 <p className="mt-1 text-sm text-gray-500">
-                  If you want to help the committee in any specific area like
-                  cultural, sponsor or anything else, then let us know
+                  If you’d like to support the committee in any specific
+                  area—such as cultural activities, sponsorship, or anything
+                  else—please feel free to let us know in the comments. We’d
+                  really appreciate your involvement!
                 </p>
                 {errors.comments && (
                   <p className="mt-1 text-red-500 text-sm">

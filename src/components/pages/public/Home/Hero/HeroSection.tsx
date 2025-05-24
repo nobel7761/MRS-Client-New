@@ -13,27 +13,28 @@ const HeroSection = () => {
       className="relative min-h-screen"
       // style={{ backgroundImage: `url(${backgroundImage.src})` }}
     >
-      <div className="relative pt-24 text-white text-center">
+      <div className="relative md:pt-24 pt-16 text-white text-center">
         <CustomDotTitle
           title="Welcome to NICAA"
           dotColor="bg-secondary"
           centerAligned={true}
+          className="md:text-base text-sm"
         />
         <div className="my-4">
           <p
-            className={`${archivo.bold700.className} text-[4rem] w-[65%] mx-auto`}
+            className={`${archivo.bold700.className} md:text-[4rem] text-[30px] md:w-[65%] w-[80%] mx-auto`}
           >
             National Ideal College
           </p>
           <p
-            className={`${archivo.bold700.className} text-[4rem] w-[65%] mx-auto text-secondary -mt-5`}
+            className={`${archivo.bold700.className} md:text-[4rem] text-[30px] md:w-[65%] w-[80%] mx-auto text-secondary md:-mt-5`}
           >
             Alumni Association
           </p>
         </div>
 
         <div
-          className={`${archivo.thin300.className} flex justify-center items-center gap-16`}
+          className={`${archivo.thin300.className} flex md:flex-row flex-col justify-center items-center md:gap-16`}
         >
           <div className={`flex items-center gap-2`}>
             <div className="w-4 h-4 rounded-full bg-secondary flex justify-center items-center">
@@ -90,13 +91,13 @@ const HeroSection = () => {
         </div>
       </div>
 
-      <div className="w-[80%] mx-auto">
+      <div className="md:w-[80%] w-full mx-auto">
         <Image
           src={heroImage}
           alt="Hero Image"
           width={1000}
           height={1000}
-          className="w-full max-w-[85%] mx-auto aspect-[1/0.66] object-cover"
+          className="w-full md:max-w-[85%] mx-auto md:aspect-[1/0.66] aspect-[1/0.8] object-cover"
         />
       </div>
     </div>

@@ -52,12 +52,12 @@ const AboutUsImages = () => {
   return (
     <div className="relative w-full min-h-[600px]">
       {/* Spinning Logo on top left */}
-      <div className="absolute top-2 left-16 z-40">
+      <div className="absolute md:top-2 top-[30%] md:left-16 left-5 z-40">
         <SpinningLogo />
       </div>
 
       {/* About Image Box 1 */}
-      <div className="absolute top-[27%] left-5 w-[38%] z-10">
+      <div className="md:block hidden absolute top-[27%] left-5 w-[38%] z-10">
         <div className="relative overflow-hidden rounded-[20px] group">
           <figure className="transform transition-transform duration-500 hover:scale-105">
             <Image
@@ -73,7 +73,7 @@ const AboutUsImages = () => {
       </div>
 
       {/* About Image Box 2 */}
-      <div className="absolute top-0 right-0 w-[55%] z-10">
+      <div className="absolute md:top-0 top-10 md:right-0 right-4 w-[55%] z-10">
         <div className="relative overflow-hidden rounded-[20px] group">
           <figure className="transform transition-transform duration-500 hover:scale-105">
             <Image
@@ -105,7 +105,7 @@ const AboutUsImages = () => {
       </div>
 
       {/* Years of Togetherness Card anchored bottom right */}
-      <div className="absolute w-[35%] bottom-6 right-5 text-black rounded-[20px] group overflow-hidden">
+      <div className="absolute w-[35%] md:bottom-6 bottom-3 md:right-5 right-4 text-black rounded-[20px] group overflow-hidden">
         {/* Background image */}
         <div
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
@@ -126,13 +126,13 @@ const AboutUsImages = () => {
 
 const AboutUsHomeComponent = () => {
   return (
-    <div className="max-w-[1300px] mx-auto py-24">
-      <div className="flex gap-x-4 items-center">
+    <div className="max-w-[1300px] mx-auto md:py-24">
+      <div className="flex md:flex-row flex-col gap-x-4 gap-y-10 md:gap-y-0 items-center">
         {/* left side */}
-        <div className="w-1/2 flex justify-center items-center">
+        <div className="md:w-1/2 w-full flex justify-center items-center">
           <AboutUsImages />
         </div>
-        <div className="w-1/2 px-10">
+        <div className="md:w-1/2 w-full md:px-10 px-5">
           <CustomDotTitle
             title="About Us"
             dotColor="bg-[#D00101]"
@@ -172,7 +172,7 @@ const AboutUsHomeComponent = () => {
             descriptionClass="text-sm"
           />
 
-          <AnimatedButton
+          {/* <AnimatedButton
             route="/"
             text="More About Us"
             textColor="text-white"
@@ -181,9 +181,9 @@ const AboutUsHomeComponent = () => {
             iconColor="text-black"
             hoverButtonBgColor="bg-black"
             hoverIconBgColor="bg-white"
-            className="w-fit"
+            className="md:w-fit w-full flex justify-center"
             showBackgroundImage={true}
-          />
+          /> */}
         </div>
       </div>
     </div>

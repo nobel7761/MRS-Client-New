@@ -13,7 +13,7 @@ const FooterBottomPart = () => {
   return (
     <div>
       {/* 1st part */}
-      <div className="border-b border-white/70 pb-10 flex justify-between items-center">
+      <div className="border-b border-white/70 pb-10 flex md:flex-row flex-col gap-y-5 md:gap-y-0 justify-between items-center">
         <div className="flex items-center gap-4">
           {/* Logo */}
           <div className="relative overflow-hidden">
@@ -58,7 +58,7 @@ const FooterBottomPart = () => {
       </div>
 
       {/* 2nd part */}
-      <div className="border-b border-white/70 flex justify-between items-center gap-x-10 py-10">
+      <div className="hidden border-b border-white/70 md:flex justify-between items-center gap-x-10 py-10">
         <div className="w-1/2 flex justify-between items-center gap-x-10">
           {/* 1st column */}
           <div className="w-1/3">
@@ -221,7 +221,7 @@ const FooterBottomPart = () => {
       </div>
 
       {/* 3rd part */}
-      <div className="flex justify-center items-center mt-20">
+      <div className="flex justify-center items-center text-center mt-20">
         <p className="text-white">
           &copy; {new Date().getFullYear()} NICAA. All rights reserved. This
           website was voluntarily developed by{" "}

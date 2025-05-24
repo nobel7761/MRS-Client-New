@@ -43,7 +43,9 @@ const AnimatedButton = ({
       <div
         className={`absolute inset-0 ${hoverButtonBgColor} transform -translate-x-full group-hover:translate-x-0 transition-transform duration-500 ease-in-out delay-[1ms]`}
       ></div>
-      <p className={`${archivo.semibold600.className} relative z-10 text-base`}>
+      <p
+        className={`${archivo.semibold600.className} relative z-10 md:text-base text-sm`}
+      >
         {text}
       </p>
       <div className="relative overflow-hidden w-8 h-8 rounded-lg">

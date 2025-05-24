@@ -7,7 +7,7 @@ import backgroundImage from "@/public/background.jpg";
 
 const PageLoader = () => {
   const textRef = useRef<HTMLDivElement>(null);
-  const [isTypingComplete, setIsTypingComplete] = useState(false);
+  const mobileTextRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const tl = gsap.timeline();
@@ -21,37 +21,42 @@ const PageLoader = () => {
       yoyo: true,
     });
 
-    // Initial text animation
-    tl.fromTo(
-      textRef.current,
-      {
-        opacity: 0,
-        y: 20,
-      },
-      {
-        opacity: 1,
-        y: 0,
-        duration: 1,
-        ease: "power2.out",
-        onComplete: () => {
-          setIsTypingComplete(true);
-          // Start continuous text animation after initial appearance
-          gsap.to(textRef.current, {
-            scale: 1.05,
-            duration: 1.5,
-            ease: "power1.inOut",
-            repeat: -1,
-            yoyo: true,
-          });
+    // Initial text animation for both desktop and mobile
+    const animateText = (element: HTMLDivElement | null) => {
+      if (!element) return;
+
+      gsap.fromTo(
+        element,
+        {
+          opacity: 0,
+          y: 20,
         },
-      }
-    );
+        {
+          opacity: 1,
+          y: 0,
+          duration: 1,
+          ease: "power2.out",
+          onComplete: () => {
+            gsap.to(element, {
+              scale: 1.05,
+              duration: 1.5,
+              ease: "power1.inOut",
+              repeat: -1,
+              yoyo: true,
+            });
+          },
+        }
+      );
+    };
+
+    animateText(textRef.current);
+    animateText(mobileTextRef.current);
 
     // Add 3 second delay
     tl.to(
       {},
       {
-        duration: 3,
+        duration: 1,
       }
     );
 
@@ -81,9 +86,15 @@ const PageLoader = () => {
       <div className="min-h-[60px] flex items-center">
         <div
           ref={textRef}
-          className="text-3xl font-bold uppercase [letter-spacing:5px] logo-name text-white bg-clip-text text-transparent opacity-0"
+          className="md:block hidden text-3xl font-bold uppercase [letter-spacing:5px] logo-name text-white bg-clip-text text-transparent opacity-0"
         >
           National Ideal College Alumni Association
+        </div>
+        <div
+          ref={mobileTextRef}
+          className="md:hidden block text-center text-lg font-bold uppercase [letter-spacing:5px] logo-name text-white bg-clip-text text-transparent opacity-0"
+        >
+          National Ideal College <br /> Alumni Association
         </div>
       </div>
     </div>

@@ -9,7 +9,7 @@ const TopBar = () => {
       <div className="max-w-[1300px] px-[15px] mx-auto">
         <div className="flex justify-between items-center">
           {/* Topbar Contact Information Start */}
-          <div className="hidden md:block">
+          <div className="md:w-1/2 hidden md:block">
             <ul className="flex items-center gap-4 font-normal">
               <li>
                 <p className="flex items-center gap-2 hover:text-secondary transition-colors">
@@ -25,10 +25,10 @@ const TopBar = () => {
           </div>
           {/* Topbar Contact Information End */}
 
-          <div>
+          <div className="md:w-1/2 w-full">
             {/* Topbar Social Links Start */}
 
-            <ul className="flex items-center gap-4 font-medium">
+            <ul className="flex justify-between md:pl-32 items-center gap-4 font-medium">
               <li>
                 <Link
                   href="https://www.facebook.com/NationalIdealCollegeAlumniAssociation"
