@@ -218,7 +218,7 @@ const LoginComponent = () => {
                     </button>
                   </form>
 
-                  <div className="text-center mt-4 md:mt-6">
+                  {/* <div className="text-center mt-4 md:mt-6">
                     <p className="text-white text-sm md:text-base">
                       Don&apos;t have an account?{" "}
                       <button
@@ -228,7 +228,7 @@ const LoginComponent = () => {
                         Register here
                       </button>
                     </p>
-                  </div>
+                  </div> */}
                 </div>
               </motion.div>
             </>

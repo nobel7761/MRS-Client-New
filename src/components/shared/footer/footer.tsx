@@ -10,7 +10,7 @@ const FooterComponent = () => {
       style={{ backgroundImage: `url(${backgroundImage.src})` }}
     >
       {/* <MarqueeScroller options={clientMarqueeData} /> */}
-      <div className="w-[90%] mx-auto py-24">
+      <div className="max-w-[1300px] px-[15px] mx-auto py-24">
         <FooterBottomPart />
       </div>
     </footer>

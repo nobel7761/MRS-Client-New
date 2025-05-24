@@ -3,10 +3,12 @@
 import PageLoader from "@/components/PageLoader";
 import FooterComponent from "@/components/shared/footer/footer";
 import MainNavbar from "@/components/shared/navbar/main-navbar";
+import TitleSection from "@/components/shared/title-section/TitleSection";
 import { useAuth } from "@/contexts/AuthContext";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect } from "react";
 import backgroundImage from "@/public/background.jpg";
+import HeroSection from "@/components/pages/public/Home/Hero/HeroSection";
 
 export default function PublicLayout({
   children,
@@ -15,6 +17,7 @@ export default function PublicLayout({
 }) {
   const { isAuthenticated, isLoading, logout } = useAuth();
   const router = useRouter();
+  const pathname = usePathname();
 
   useEffect(() => {
     if (!isLoading && isAuthenticated) {
@@ -29,18 +32,29 @@ export default function PublicLayout({
     return <PageLoader />;
   }
 
+  const getPageTitle = (path: string) => {
+    // Remove leading slash and split by remaining slashes
+    const pathParts = path.slice(1).split("/");
+    // Capitalize each word and join with spaces
+    return pathParts
+      .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+      .join(" ");
+  };
+
   return (
     <div className="flex flex-col overflow-y-auto min-h-screen">
-      <section>
-        <div
-          className="bg-cover bg-center bg-no-repeat"
-          style={{ backgroundImage: `url(${backgroundImage.src})` }}
-        >
-          <MainNavbar />
-        </div>
-        {children}
-        <FooterComponent />
-      </section>
+      <div
+        className="bg-cover bg-center bg-no-repeat"
+        style={{ backgroundImage: `url(${backgroundImage.src})` }}
+      >
+        <MainNavbar />
+        {pathname === "/" && <HeroSection />}
+        {pathname === "/representative-registration-reunion-2026" && (
+          <TitleSection title="Representative for Reunion 2026" />
+        )}
+      </div>
+      <div>{children}</div>
+      <FooterComponent />
     </div>
   );
 }

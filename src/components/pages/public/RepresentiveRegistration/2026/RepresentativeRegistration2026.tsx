@@ -92,24 +92,8 @@ const RepresentativeRegistration2026Component = () => {
 
   return (
     <div>
-      {/* top part */}
-      <div
-        className="bg-cover bg-center bg-no-repeat py-24"
-        style={{ backgroundImage: `url(${backgroundImage.src})` }}
-      >
-        <p className="text-white text-4xl font-bold text-center">
-          Representative for Reunion 2026
-        </p>
-        <p className="text-white text-xl font-bold text-center pt-6">
-          <Link href="/" className="hover:text-secondary">
-            Home
-          </Link>{" "}
-          / Representative for Reunion 2026
-        </p>
-      </div>
-
       {/* bottom part */}
-      <div className="w-[90%] mx-auto py-24">
+      <div className="w-[90%] mx-auto pt-24">
         <div className="flex justify-between gap-x-10">
           <div className="w-1/2">
             <p className="text-[35px] font-extrabold text-primary">

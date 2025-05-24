@@ -174,31 +174,46 @@ const FooterBottomPart = () => {
                 <Link
                   href="https://www.facebook.com/NationalIdealCollegeAlumniAssociation"
                   target="_blank"
-                  className="border border-white rounded-full p-2"
+                  className="flex items-center gap-x-2 hover:text-secondary transition-colors"
                 >
-                  <FaFacebookF />
+                  <div className="border border-white rounded-full p-2 hover:bg-secondary hover:text-black transition-colors duration-300">
+                    <FaFacebookF />
+                  </div>
+
+                  <p className="text-white hover:text-secondary transition-colors">
+                    Facebook
+                  </p>
                 </Link>
-                <p className="text-white">Facebook</p>
               </div>
               <div className="flex items-center gap-x-2">
                 <Link
                   href="https://www.instagram.com/nic_alumni_association"
                   target="_blank"
-                  className="border border-white rounded-full p-2"
+                  className="flex items-center gap-x-2 hover:text-secondary transition-colors"
                 >
-                  <FaInstagram />
+                  <div className="border border-white rounded-full p-2 hover:bg-secondary hover:text-black transition-colors duration-300">
+                    <FaInstagram />
+                  </div>
+
+                  <p className="text-white hover:text-secondary transition-colors">
+                    Instagram
+                  </p>
                 </Link>
-                <p className="text-white">Instagram</p>
               </div>
               <div className="flex items-center gap-x-2">
                 <Link
                   href="https://www.youtube.com/@nationalidealcollegealumni9865"
                   target="_blank"
-                  className="border border-white rounded-full p-2"
+                  className="flex items-center gap-x-2 hover:text-secondary transition-colors"
                 >
-                  <FaYoutube />
+                  <div className="border border-white rounded-full p-2 hover:bg-secondary hover:text-black transition-colors duration-300">
+                    <FaYoutube />
+                  </div>
+
+                  <p className="text-white hover:text-secondary transition-colors">
+                    Youtube
+                  </p>
                 </Link>
-                <p className="text-white">Youtube</p>
               </div>
             </div>
           </div>

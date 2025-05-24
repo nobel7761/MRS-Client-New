@@ -126,7 +126,7 @@ const AboutUsImages = () => {
 
 const AboutUsHomeComponent = () => {
   return (
-    <div className="py-24 container mx-auto">
+    <div className="max-w-[1300px] mx-auto py-24">
       <div className="flex gap-x-4 items-center">
         {/* left side */}
         <div className="w-1/2 flex justify-center items-center">

@@ -10,8 +10,8 @@ import backgroundImage from "@/public/background.jpg";
 const HeroSection = () => {
   return (
     <div
-      className="relative min-h-screen bg-cover bg-center bg-no-repeat"
-      style={{ backgroundImage: `url(${backgroundImage.src})` }}
+      className="relative min-h-screen"
+      // style={{ backgroundImage: `url(${backgroundImage.src})` }}
     >
       <div className="relative pt-24 text-white text-center">
         <CustomDotTitle
