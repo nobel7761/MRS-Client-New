@@ -46,3 +46,12 @@
     transform: translateX(0);
   }
 }
+
+@keyframes infiniterotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}

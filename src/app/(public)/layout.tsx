@@ -32,15 +32,6 @@ export default function PublicLayout({
     return <PageLoader />;
   }
 
-  const getPageTitle = (path: string) => {
-    // Remove leading slash and split by remaining slashes
-    const pathParts = path.slice(1).split("/");
-    // Capitalize each word and join with spaces
-    return pathParts
-      .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
-      .join(" ");
-  };
-
   return (
     <div className="flex flex-col overflow-y-auto min-h-screen">
       <div

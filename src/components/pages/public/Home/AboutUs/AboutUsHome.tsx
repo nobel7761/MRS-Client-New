@@ -11,9 +11,17 @@ import AboutUsImage2 from "@/public/about/about-img-2.jpg";
 import AboutUsImage3 from "@/public/about/about-img-3.jpg";
 import backgroundImage from "@/public/background.jpg";
 
-const SpinningLogo = () => {
+export const SpinningLogo = ({
+  className,
+  brandLogoClassName,
+}: {
+  className?: string;
+  brandLogoClassName?: string;
+}) => {
   return (
-    <div className="relative w-[140px] h-[140px] flex items-center justify-center">
+    <div
+      className={`relative w-[140px] h-[140px] flex items-center justify-center ${className}`}
+    >
       {/* Outer spinning circle with text */}
       <div
         className="absolute w-full h-full animate-spin-slow bg-primary rounded-full flex items-center justify-center  bg-cover bg-center bg-no-repeat"
@@ -38,7 +46,9 @@ const SpinningLogo = () => {
       </div>
 
       {/* Inner logo with slower spin */}
-      <div className="absolute w-[75px] h-[75px] rounded-full flex items-center justify-center">
+      <div
+        className={`absolute w-[75px] h-[75px] rounded-full flex items-center justify-center ${brandLogoClassName}`}
+      >
         <BrandLogo imageClassName="w-full h-full p-2" />
       </div>
     </div>
