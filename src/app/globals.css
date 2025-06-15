@@ -12,6 +12,12 @@
   }
 }
 
+.MuiDataGrid-panel .MuiFormGroup-root {
+  display: grid !important;
+  grid-template-columns: repeat(3, 1fr) !important;
+  gap: 16px !important;
+}
+
 .custom-scrollbar {
   scrollbar-width: thin;
   scrollbar-color: white transparent;
