@@ -111,7 +111,7 @@ const RepresentativeRegistrationComponent = () => {
     },
     {
       name: "facebookUrl",
-      label: "Facebook URL",
+      label: "Facebook",
       options: {
         filter: true,
         sort: true,
