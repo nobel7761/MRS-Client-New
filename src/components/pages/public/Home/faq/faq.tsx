@@ -7,6 +7,8 @@ import Image from "next/image";
 import faqsImage from "@/public/faqs/faqs-image.jpg";
 import { SpinningLogo } from "../AboutUs/AboutUsHome";
 import BrandLogo from "@/components/shared/brand-logo/brand-logo";
+import { useState } from "react";
+import { MdKeyboardArrowUp, MdKeyboardArrowDown } from "react-icons/md";
 
 const SpinningComponent = ({
   outerCircleColor,
@@ -38,10 +40,10 @@ const SpinningComponent = ({
           fill="white"
           fontSize="16"
           fontWeight="700"
-          style={{ letterSpacing: 2.3, fontFamily: "Archivo" }}
+          style={{ letterSpacing: 3, fontFamily: "Archivo" }}
         >
           <textPath href="#textPath" startOffset="50%" textAnchor="middle">
-            National Ideal College Alumni Association (NICAA)
+            National Ideal College Alumni Association
           </textPath>
         </text>
       </svg>
@@ -49,7 +51,127 @@ const SpinningComponent = ({
   );
 };
 
+// FAQ data
+const faqData = [
+  {
+    id: 1,
+    question: "How do I get started with your services?",
+    answer:
+      "We offer a range of HR solutions, including recruitment services, employee training and development, compliance support, and strategic workforce planning. Our team will work with you to understand your specific needs and create a customized solution.",
+  },
+  {
+    id: 2,
+    question: "What services does your HR agency provide?",
+    answer:
+      "We offer a comprehensive range of HR solutions, including recruitment services, employee training and development, compliance support, strategic workforce planning, payroll solutions, and employee engagement programs.",
+  },
+  {
+    id: 3,
+    question: "How do I apply for a job through your platform?",
+    answer:
+      "We offer a range of HR solutions, including recruitment services, employee training and development. Our platform connects talented professionals with opportunities that match their skills and career goals.",
+  },
+  {
+    id: 4,
+    question: "Do you offer employee training programs?",
+    answer:
+      "Yes, we offer comprehensive employee training and development programs designed to enhance skills, improve performance, and support career growth. Our programs are tailored to meet the specific needs of your organization.",
+  },
+  {
+    id: 5,
+    question: "What industries do you specialize in?",
+    answer:
+      "We offer a range of HR solutions, including recruitment services, employee training and development. Our expertise spans across various industries, ensuring we can meet the unique needs of different sectors.",
+  },
+];
+
+// FAQ Accordion Item Component
+const FAQAccordionItem = ({
+  item,
+  isOpen,
+  onToggle,
+}: {
+  item: { id: number; question: string; answer: string };
+  isOpen: boolean;
+  onToggle: () => void;
+}) => {
+  return (
+    <div className="mb-2">
+      <div
+        className={`relative overflow-hidden rounded-lg transition-all duration-500 ease-in-out
+          `}
+      >
+        {/* Background Image Layer */}
+        <div
+          className={`absolute inset-0 bg-cover bg-center bg-no-repeat transition-all duration-500 ease-in-out ${
+            isOpen ? "opacity-100 scale-105" : "opacity-0 scale-100"
+          }`}
+          style={{ backgroundImage: `url(${backgroundImage.src})` }}
+        ></div>
+
+        {/* Content Layer */}
+        <div className="relative z-10">
+          <button
+            className="w-full p-6 text-left flex justify-between items-center transition-all duration-500 ease-in-out"
+            onClick={onToggle}
+          >
+            <h3
+              className={`${
+                archivo.semibold600.className
+              } text-lg pr-4 transition-colors duration-500 ${
+                isOpen ? "text-white" : "text-gray-900"
+              }`}
+            >
+              {item.question}
+            </h3>
+            <div className="flex-shrink-0">
+              <div className="relative w-6 h-6">
+                <div
+                  className={`absolute inset-0 bg-primary transform transition-all duration-500 ease-in-out rounded-lg ${
+                    isOpen ? "rotate-180 translate-y-1" : "translate-y-0"
+                  }`}
+                ></div>
+                <div
+                  className={`absolute inset-0 flex items-center justify-center transition-all duration-500 ease-in-out ${
+                    isOpen ? "translate-y-1" : "translate-y-0"
+                  }`}
+                >
+                  {isOpen ? (
+                    <MdKeyboardArrowUp className="w-6 h-6 text-white" />
+                  ) : (
+                    <MdKeyboardArrowDown className="w-6 h-6 text-white" />
+                  )}
+                </div>
+              </div>
+            </div>
+          </button>
+
+          <div
+            className={`overflow-hidden transition-all duration-500 ease-in-out ${
+              isOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
+            }`}
+          >
+            <div className="px-6 pb-6">
+              <p
+                className={`${archivo.regular400.className} text-white leading-relaxed`}
+              >
+                {item.answer}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const FAQComponent = () => {
+  const [openItem, setOpenItem] = useState<number | null>(2); // Second item open by default
+
+  const handleToggle = (id: number) => {
+    setOpenItem(openItem === id ? null : id);
+  };
+
   return (
     <div
       className="bg-[#FAFAFA] bg-cover bg-center bg-no-repeat"
@@ -101,9 +223,21 @@ const FAQComponent = () => {
               <SpinningComponent outerCircleColor="bg-transparent" />
             </div>
           </div>
-          {/* right side */}
-          <div className="md:w-1/2 w-full bg-blue-600">
-            <p>right side</p>
+          {/* right side - FAQ Accordion */}
+          <div
+            className="md:w-1/2 w-full flex flex-col justify-center"
+            style={{ minHeight: "600px" }}
+          >
+            <div className="">
+              {faqData.map((item) => (
+                <FAQAccordionItem
+                  key={item.id}
+                  item={item}
+                  isOpen={openItem === item.id}
+                  onToggle={() => handleToggle(item.id)}
+                />
+              ))}
+            </div>
           </div>
         </div>
       </div>
