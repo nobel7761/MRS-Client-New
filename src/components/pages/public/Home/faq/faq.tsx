@@ -7,8 +7,14 @@ import Image from "next/image";
 import faqsImage from "@/public/faqs/faqs-image.jpg";
 import { SpinningLogo } from "../AboutUs/AboutUsHome";
 import BrandLogo from "@/components/shared/brand-logo/brand-logo";
-import { useState } from "react";
+import {
+  useState as useLocalState,
+  useRef,
+  useEffect as useLocalEffect,
+} from "react";
 import { MdKeyboardArrowUp, MdKeyboardArrowDown } from "react-icons/md";
+import { useApi } from "@/hooks/useApi";
+import { FAQ, HomePageFAQ } from "@/types/faq";
 
 const SpinningComponent = ({
   outerCircleColor,
@@ -51,13 +57,13 @@ const SpinningComponent = ({
   );
 };
 
-// FAQ data
-const faqData = [
+// Static FAQ data as fallback
+const staticFaqData: HomePageFAQ[] = [
   {
     id: 1,
     question: "How do I get started with your services?",
     answer:
-      "We offer a range of HR solutions, including recruitment services, employee training and development, compliance support, and strategic workforce planning. Our team will work with you to understand your specific needs and create a customized solution.",
+      "We offer a range of HR solutions, including recruitment services, employee training and development, compliance support, and strategic workforce planning. Our team will work with you to understand your specific needs and create a customized solution. Our team will work with you to understand your.",
   },
   {
     id: 2,
@@ -91,15 +97,32 @@ const FAQAccordionItem = ({
   isOpen,
   onToggle,
 }: {
-  item: { id: number; question: string; answer: string };
+  item: HomePageFAQ;
   isOpen: boolean;
   onToggle: () => void;
 }) => {
+  const [expanded, setExpanded] = useLocalState(false);
+  const [showReadMore, setShowReadMore] = useLocalState(false);
+  const answerRef = useRef<HTMLParagraphElement>(null);
+
+  useLocalEffect(() => {
+    if (isOpen && answerRef.current) {
+      // Check if the answer overflows 4 lines
+      const el = answerRef.current;
+      // Get computed line height
+      const lineHeight = parseFloat(getComputedStyle(el).lineHeight);
+      const maxHeight = lineHeight * 4;
+      setShowReadMore(el.scrollHeight > maxHeight + 2); // +2 for rounding
+    } else {
+      setShowReadMore(false);
+      setExpanded(false);
+    }
+  }, [isOpen, item.answer]);
+
   return (
     <div className="mb-2">
       <div
-        className={`relative overflow-hidden rounded-lg transition-all duration-500 ease-in-out
-          `}
+        className={`relative overflow-hidden rounded-lg transition-all duration-500 ease-in-out`}
       >
         {/* Background Image Layer */}
         <div
@@ -116,7 +139,7 @@ const FAQAccordionItem = ({
             onClick={onToggle}
           >
             <h3
-              className={`${
+              className={`$
                 archivo.semibold600.className
               } text-lg pr-4 transition-colors duration-500 ${
                 isOpen ? "text-white" : "text-gray-900"
@@ -153,10 +176,24 @@ const FAQAccordionItem = ({
           >
             <div className="px-6 pb-6">
               <p
-                className={`${archivo.regular400.className} text-white leading-relaxed`}
+                ref={answerRef}
+                className={`${
+                  archivo.regular400.className
+                } text-white leading-relaxed whitespace-pre-line break-words ${
+                  !expanded ? "line-clamp-4" : ""
+                }`}
+                style={{ WebkitLineClamp: !expanded ? 4 : undefined }}
               >
                 {item.answer}
               </p>
+              {isOpen && showReadMore && (
+                <button
+                  className="mt-2 text-sm text-primary underline focus:outline-none"
+                  onClick={() => setExpanded((prev) => !prev)}
+                >
+                  {expanded ? "Show less" : "Read more"}
+                </button>
+              )}
             </div>
           </div>
         </div>
@@ -166,7 +203,55 @@ const FAQAccordionItem = ({
 };
 
 const FAQComponent = () => {
-  const [openItem, setOpenItem] = useState<number | null>(2); // Second item open by default
+  const [openItem, setOpenItem] = useLocalState<number | null>(2); // Second item open by default
+  const [faqData, setFaqData] = useLocalState<HomePageFAQ[]>([]);
+
+  // Fetch FAQs from API
+  const {
+    data: apiFaqs,
+    loading,
+    error,
+  } = useApi<FAQ[]>({
+    url: "/faqs/homepage",
+  });
+
+  // Process API data and combine with static data if needed
+  useLocalEffect(() => {
+    if (apiFaqs && apiFaqs.length > 0) {
+      // Convert API FAQs to HomePageFAQ format
+      const apiFaqsFormatted: HomePageFAQ[] = apiFaqs.map((faq, index) => ({
+        id: index + 1,
+        question: faq.question,
+        answer: faq.answer,
+      }));
+
+      // If we have less than 5 FAQs from API, fill with static data
+      if (apiFaqsFormatted.length < 5) {
+        const remainingCount = 5 - apiFaqsFormatted.length;
+        const staticFaqsToAdd = staticFaqData
+          .slice(0, remainingCount)
+          .map((faq, index) => ({
+            ...faq,
+            id: apiFaqsFormatted.length + index + 1,
+          }));
+        setFaqData([...apiFaqsFormatted, ...staticFaqsToAdd]);
+        console.log(
+          `Loaded ${apiFaqsFormatted.length} FAQs from API, added ${remainingCount} static FAQs`
+        );
+      } else {
+        setFaqData(apiFaqsFormatted);
+        console.log(`Loaded ${apiFaqsFormatted.length} FAQs from API`);
+      }
+    } else if (!loading && !error) {
+      // If no API data and not loading, use static data
+      setFaqData(staticFaqData);
+      console.log("No API data available, using static FAQ data");
+    } else if (error) {
+      // If there's an error, use static data
+      setFaqData(staticFaqData);
+      console.error("Error fetching FAQs from API:", error);
+    }
+  }, [apiFaqs, loading, error]);
 
   const handleToggle = (id: number) => {
     setOpenItem(openItem === id ? null : id);
@@ -188,11 +273,13 @@ const FAQComponent = () => {
           <p
             className={`w-1/2 ${archivo.semibold600.className} text-black md:text-[2.7rem] text-[1.8rem] md:leading-[3rem] tracking-[-0.02em] my-5`}
           >
-            Your questions answered HR{" "}
-            <span className="text-primary">solutions simplified</span>
+            FAQs about{" "}
+            <span className="text-primary">
+              National Ideal College Alumni Association
+            </span>
           </p>
 
-          <p className="w-1/2 flex justify-end">
+          {/* <p className="w-1/2 flex justify-end">
             <AnimatedButton
               route="/faqs"
               text="View All FAQs"
@@ -205,7 +292,7 @@ const FAQComponent = () => {
               className="md:w-fit w-full flex justify-center"
               showBackgroundImage={true}
             />
-          </p>
+          </p> */}
         </div>
 
         <div className="flex justify-between gap-x-10">
@@ -229,14 +316,24 @@ const FAQComponent = () => {
             style={{ minHeight: "600px" }}
           >
             <div className="">
-              {faqData.map((item) => (
-                <FAQAccordionItem
-                  key={item.id}
-                  item={item}
-                  isOpen={openItem === item.id}
-                  onToggle={() => handleToggle(item.id)}
-                />
-              ))}
+              {loading ? (
+                <div className="flex items-center justify-center py-8">
+                  <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary"></div>
+                </div>
+              ) : faqData.length > 0 ? (
+                faqData.map((item) => (
+                  <FAQAccordionItem
+                    key={item.id}
+                    item={item}
+                    isOpen={openItem === item.id}
+                    onToggle={() => handleToggle(item.id)}
+                  />
+                ))
+              ) : (
+                <div className="text-center py-8 text-gray-500">
+                  No FAQs available at the moment.
+                </div>
+              )}
             </div>
           </div>
         </div>

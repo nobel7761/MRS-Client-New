@@ -22,7 +22,7 @@ import { FiChevronDown, FiEdit, FiTrash2 } from "react-icons/fi";
 const MUIDataTable = MUIDataTableImport as unknown as React.ComponentType<any>;
 
 // Dropdown data constants (same as RepresentativeRegistration2026.tsx)
-const hscYears = Array.from({ length: 23 }, (_, i) => 2003 + i);
+const hscYears = Array.from({ length: 25 }, (_, i) => 2003 + i);
 const hscGroups = ["Science", "Business Studies", "Humanities"];
 const genders = ["Male", "Female"];
 
