@@ -194,7 +194,7 @@ const FAQComponent = () => {
 
           <p className="w-1/2 flex justify-end">
             <AnimatedButton
-              route="/"
+              route="/faqs"
               text="View All FAQs"
               textColor="text-white"
               buttonBgColor="bg-primary"

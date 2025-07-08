@@ -16,6 +16,7 @@ export function middleware(request: NextRequest) {
     "/",
     "/login",
     "/register",
+    "/faqs",
     "/representative-registration-reunion-2026",
   ];
   if (publicRoutes.includes(pathname)) {

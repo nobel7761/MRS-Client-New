@@ -43,6 +43,9 @@ export default function PublicLayout({
         {pathname === "/representative-registration-reunion-2026" && (
           <TitleSection title="Representative for Reunion 2026" />
         )}
+        {pathname === "/faqs" && (
+          <TitleSection title="Frequently Asked Questions" />
+        )}
       </div>
       <div>{children}</div>
       <FooterComponent />

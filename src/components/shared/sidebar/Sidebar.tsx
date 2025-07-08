@@ -12,8 +12,10 @@ import CustomDropdown, {
 import { motion, AnimatePresence } from "framer-motion";
 import { MdKeyboardArrowLeft } from "react-icons/md";
 import { MdKeyboardArrowRight } from "react-icons/md";
+import { MdKeyboardArrowDown } from "react-icons/md";
 import logo from "@/public/nicaa-logo-white-bg.png";
 import Image from "next/image";
+import { useState } from "react";
 
 interface SidebarProps {
   isCollapsed: boolean;
@@ -24,10 +26,106 @@ const Sidebar = ({ isCollapsed, setIsCollapsed }: SidebarProps) => {
   const pathname = usePathname();
   const router = useRouter();
   const { logout } = useAuth();
+  const [expandedItems, setExpandedItems] = useState<string[]>([]);
 
   const handleLogout = () => {
     logout();
     router.push("/");
+  };
+
+  const toggleExpanded = (itemName: string) => {
+    setExpandedItems((prev) =>
+      prev.includes(itemName)
+        ? prev.filter((name) => name !== itemName)
+        : [...prev, itemName]
+    );
+  };
+
+  const renderSidebarItem = (item: any, level: number = 0) => {
+    const hasChildren = item.children && item.children.length > 0;
+    const isExpanded = expandedItems.includes(item.name);
+    const isActive =
+      pathname === item.href ||
+      (hasChildren &&
+        item.children.some((child: any) => pathname === child.href));
+
+    if (hasChildren) {
+      return (
+        <div key={item.name}>
+          <button
+            onClick={() => toggleExpanded(item.name)}
+            className={`w-full p-3 cursor-pointer flex items-center justify-between rounded-md ${
+              isActive
+                ? "bg-[#EBF5FF] text-[#173F66] font-semibold"
+                : "hover:bg-[#EBF5FF]/20 text-white"
+            } ${isCollapsed ? "justify-center" : ""}`}
+            {...(isCollapsed ? { title: item.name } : {})}
+          >
+            <div className="flex items-center">
+              <span
+                className={`${
+                  isCollapsed
+                    ? "text-[1.5rem] flex items-center justify-center w-6"
+                    : "mr-3"
+                }`}
+              >
+                {item.icon}
+              </span>
+              {!isCollapsed && item.name}
+            </div>
+            {!isCollapsed && (
+              <MdKeyboardArrowDown
+                className={`transition-transform duration-200 ${
+                  isExpanded ? "rotate-180" : ""
+                }`}
+              />
+            )}
+          </button>
+
+          {!isCollapsed && isExpanded && (
+            <div className="ml-6 mt-1 space-y-1">
+              {item.children.map((child: any) => (
+                <Link
+                  key={child.name}
+                  href={child.href}
+                  className={`p-2 cursor-pointer flex items-center rounded-md ${
+                    pathname === child.href
+                      ? "bg-[#EBF5FF] text-[#173F66] font-semibold"
+                      : "hover:bg-[#EBF5FF]/20 text-white"
+                  }`}
+                >
+                  {child.name}
+                </Link>
+              ))}
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    return (
+      <Link
+        key={item.name}
+        href={item.href || "#"}
+        className={`p-3 cursor-pointer flex items-center rounded-md ${
+          isActive
+            ? "bg-[#EBF5FF] text-[#173F66] font-semibold"
+            : "hover:bg-[#EBF5FF]/20"
+        } ${isCollapsed ? "justify-center" : ""}`}
+        {...(isCollapsed ? { title: item.name } : {})}
+      >
+        <span
+          className={`${
+            isCollapsed
+              ? "text-[1.5rem] flex items-center justify-center w-6"
+              : "mr-3"
+          }`}
+        >
+          {item.icon}
+        </span>
+        {!isCollapsed && item.name}
+      </Link>
+    );
   };
 
   return (
@@ -90,33 +188,11 @@ const Sidebar = ({ isCollapsed, setIsCollapsed }: SidebarProps) => {
 
       <nav className="flex-1 text-sm text-white overflow-y-auto custom-scrollbar">
         <ul className="space-y-1 py-4">
-          {sidebarItems.map((item) => {
-            const isActive = pathname === item.href;
-            return (
-              <li key={item.name} className="mx-2">
-                <Link
-                  href={item.href}
-                  className={`p-3 cursor-pointer flex items-center rounded-md ${
-                    isActive
-                      ? "bg-[#EBF5FF] text-[#173F66] font-semibold"
-                      : "hover:bg-[#EBF5FF]/20"
-                  } ${isCollapsed ? "justify-center" : ""}`}
-                  {...(isCollapsed ? { title: item.name } : {})}
-                >
-                  <span
-                    className={`${
-                      isCollapsed
-                        ? "text-[1.5rem] flex items-center justify-center w-6"
-                        : "mr-3"
-                    }`}
-                  >
-                    {item.icon}
-                  </span>
-                  {!isCollapsed && item.name}
-                </Link>
-              </li>
-            );
-          })}
+          {sidebarItems.map((item) => (
+            <li key={item.name} className="mx-2">
+              {renderSidebarItem(item)}
+            </li>
+          ))}
         </ul>
       </nav>
 
