@@ -1,0 +1,36 @@
+import { useAuth } from "@/contexts/AuthContext";
+import { UserRole } from "@/types/auth";
+
+export const useRoleAccess = () => {
+  const { user } = useAuth();
+
+  const hasRole = (allowedRoles: UserRole[]): boolean => {
+    if (!user) return false;
+    return allowedRoles.includes(user.role);
+  };
+
+  const isSuperAdmin = (): boolean => {
+    return hasRole([UserRole.SUPER_ADMIN]);
+  };
+
+  const isAdmin = (): boolean => {
+    return hasRole([UserRole.ADMIN, UserRole.SUPER_ADMIN]);
+  };
+
+  const isUser = (): boolean => {
+    return hasRole([UserRole.USER]);
+  };
+
+  const canAccessFaqs = (): boolean => {
+    return isSuperAdmin();
+  };
+
+  return {
+    hasRole,
+    isSuperAdmin,
+    isAdmin,
+    isUser,
+    canAccessFaqs,
+    userRole: user?.role,
+  };
+};

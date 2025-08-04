@@ -46,6 +46,13 @@ export function middleware(request: NextRequest) {
     ) {
       return NextResponse.redirect(new URL("/", request.url));
     }
+
+    // FAQs routes protection - only SUPER_ADMIN can access
+    if (pathname.startsWith("/admin/faqs")) {
+      if (parsedUser.role !== UserRole.SUPER_ADMIN) {
+        return NextResponse.redirect(new URL("/admin", request.url));
+      }
+    }
   }
 
   return NextResponse.next();

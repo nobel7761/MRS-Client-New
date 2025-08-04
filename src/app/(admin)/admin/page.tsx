@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { FiUsers } from "react-icons/fi";
 import backgroundImage from "@/public/background.jpg";
 import { useApi } from "@/hooks/useApi";
+import RoleInfo from "@/components/shared/custom-components/RoleInfo";
 import {
   PieChart,
   Pie,
@@ -72,6 +73,7 @@ export default function AdminDashboard() {
 
   return (
     <div className="space-y-6">
+      {/* <RoleInfo /> */}
       <div
         className="bg-cover bg-center bg-no-repeat p-5 rounded-lg"
         style={{ backgroundImage: `url(${backgroundImage.src})` }}

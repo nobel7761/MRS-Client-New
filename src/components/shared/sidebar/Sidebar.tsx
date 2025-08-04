@@ -4,7 +4,8 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import { FiLogOut } from "react-icons/fi";
-import { sidebarItems } from "./sidebar.items";
+import { getSidebarItems } from "./sidebar.items";
+import { useRoleAccess } from "@/hooks/useRoleAccess";
 import backgroundImage from "@/public/background.jpg";
 import CustomDropdown, {
   NavigationItem,
@@ -26,7 +27,11 @@ const Sidebar = ({ isCollapsed, setIsCollapsed }: SidebarProps) => {
   const pathname = usePathname();
   const router = useRouter();
   const { logout } = useAuth();
+  const { userRole } = useRoleAccess();
   const [expandedItems, setExpandedItems] = useState<string[]>([]);
+
+  // Get role-based sidebar items
+  const sidebarItems = getSidebarItems(userRole);
 
   const handleLogout = () => {
     logout();
