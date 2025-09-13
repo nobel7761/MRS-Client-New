@@ -26,7 +26,7 @@ export const getSidebarItems = (userRole?: UserRole): SidebarItem[] => {
     },
   ];
 
-  // Only show FAQs and Users for SUPER_ADMIN
+  // Only show FAQs, Users and Email Management for SUPER_ADMIN
   if (userRole === UserRole.SUPER_ADMIN) {
     baseItems.push({
       name: "FAQs",
@@ -65,6 +65,29 @@ export const getSidebarItems = (userRole?: UserRole): SidebarItem[] => {
         {
           name: "All Events",
           href: "/admin/events",
+        },
+      ],
+    });
+
+    baseItems.push({
+      name: "Email Management",
+      icon: "📧",
+      children: [
+        {
+          name: "Campaigns",
+          href: "/admin/email/campaigns",
+        },
+        {
+          name: "Today's Schedule",
+          href: "/admin/email/today-schedule",
+        },
+        {
+          name: "Statistics",
+          href: "/admin/email/stats",
+        },
+        {
+          name: "Test Configuration",
+          href: "/admin/email/test",
         },
       ],
     });

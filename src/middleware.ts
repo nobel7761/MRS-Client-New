@@ -22,6 +22,7 @@ export function middleware(request: NextRequest) {
     "/team",
     "/blogs",
     "/representative-registration-reunion-2026",
+    "/test-api",
   ];
 
   // Check if the current path is a blog detail route (e.g., /blogs/some-slug)
