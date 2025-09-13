@@ -202,9 +202,30 @@ const Sidebar = ({ isCollapsed, setIsCollapsed }: SidebarProps) => {
       </nav>
 
       <div className="border-t border-gray-200">
+        {/* View Public Site Button */}
+        <button
+          onClick={() => router.push("/")}
+          className={`mt-2 flex items-center w-full px-4 py-1 hover:bg-[#EBF5FF]/10 text-white rounded-md transition-colors ${
+            isCollapsed ? "justify-center" : ""
+          }`}
+          {...(isCollapsed ? { title: "View Public Site" } : {})}
+        >
+          <span
+            className={`${
+              isCollapsed
+                ? "text-[1.5rem] flex items-center justify-center w-6"
+                : "mr-3"
+            }`}
+          >
+            🌐
+          </span>
+          {!isCollapsed && <span>View Public Site</span>}
+        </button>
+
+        {/* Logout Button */}
         <button
           onClick={handleLogout}
-          className={`flex items-center w-full px-4 py-3 hover:bg-[#EBF5FF]/10 text-white rounded-md transition-colors ${
+          className={`flex items-center w-full px-4 py-1 hover:bg-[#EBF5FF]/10 text-white rounded-md transition-colors ${
             isCollapsed ? "justify-center" : ""
           }`}
           {...(isCollapsed ? { title: "Logout" } : {})}
@@ -218,7 +239,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed }: SidebarProps) => {
           >
             <FiLogOut />
           </span>
-          {!isCollapsed && "Logout"}
+          {!isCollapsed && <span>Logout</span>}
         </button>
       </div>
     </aside>

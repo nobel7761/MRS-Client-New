@@ -6,8 +6,12 @@ import { useState } from "react";
 import { archivo } from "@/lib/fonts";
 import AnimatedButton from "@/components/shared/custom-components/animated-button";
 
+import { useAuth } from "@/contexts/AuthContext";
+import UserDropdown from "../custom-components/UserDropdown";
+
 const MainNavbar = () => {
   const [activePage, setActivePage] = useState("Home");
+  const { isAuthenticated, user, logout } = useAuth();
 
   return (
     <div className="sticky top-0">
@@ -16,25 +20,26 @@ const MainNavbar = () => {
         className={`shadow-sm text-white border-b border-white/10 ${archivo.medium500.className}`}
       >
         <div className="max-w-[1300px] px-[15px] mx-auto">
-          <div className="flex items-center justify-center py-3">
+          <div className="flex items-center justify-between py-3">
+            {/* Left Section - Logo and NICAA */}
             <div className="flex items-center gap-4">
               {/* Logo */}
               <div className="relative overflow-hidden">
                 <Link href="/" className="flex items-center relative z-10">
                   <BrandLogo
-                    imageClassName="w-32 h-32"
+                    imageClassName="w-16 h-16"
                     textClassName="hidden"
                   />
                 </Link>
                 <div className="absolute inset-0 bg-white transform -translate-x-full group-hover:translate-x-0 transition-transform duration-500 ease-in-out"></div>
               </div>
-              {/* <Link href="/" className="flex items-center relative z-10">
+              <Link href="/" className="flex items-center relative z-10">
                 <p className={`text-4xl font-medium`}>NICAA</p>
-              </Link> */}
+              </Link>
             </div>
 
-            {/* Navigation Links */}
-            {/* <nav
+            {/* Middle Section - Navigation Links */}
+            <nav
               className={`hidden md:flex items-center space-x-8 ${archivo.medium500.className}`}
             >
               {navbarItems.map((item) => (
@@ -51,37 +56,45 @@ const MainNavbar = () => {
                   {item.label}
                 </Link>
               ))}
-            </nav> */}
+            </nav>
 
-            {/* Get Started Button */}
-            {/* <AnimatedButton
-              route="/login"
-              text="Login"
-              textColor="text-black"
-              buttonBgColor="bg-secondary"
-              iconBgColor="bg-primary"
-              hoverButtonBgColor="bg-white"
-              hoverIconBgColor="bg-black"
-              className="w-[120px] flex justify-between items-center"
-              showBackgroundImage={false}
-            /> */}
-
-            {/* Mobile Menu Button */}
-            {/* <button className="md:hidden hover:text-primary">
-              <svg
-                className="w-6 h-6"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M4 6h16M4 12h16M4 18h16"
+            {/* Right Section - Login/Logout Button and Mobile Menu */}
+            <div className="flex items-center gap-4">
+              {isAuthenticated ? (
+                // <UserDropdown />
+                <UserDropdown />
+              ) : (
+                // <Link href="/profile">Profile</Link>
+                <AnimatedButton
+                  route="/login"
+                  text="Login"
+                  textColor="text-black"
+                  buttonBgColor="bg-secondary"
+                  iconBgColor="bg-primary"
+                  hoverButtonBgColor="bg-white"
+                  hoverIconBgColor="bg-black"
+                  className="w-[120px] flex justify-between items-center"
+                  showBackgroundImage={false}
                 />
-              </svg>
-            </button> */}
+              )}
+
+              {/* Mobile Menu Button */}
+              <button className="md:hidden hover:text-primary">
+                <svg
+                  className="w-6 h-6"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M4 6h16M4 12h16M4 18h16"
+                  />
+                </svg>
+              </button>
+            </div>
           </div>
         </div>
       </div>

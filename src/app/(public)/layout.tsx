@@ -46,6 +46,10 @@ export default function PublicLayout({
         {pathname === "/faqs" && (
           <TitleSection title="Frequently Asked Questions" />
         )}
+        {pathname === "/about" && <TitleSection title="About Us" />}
+        {pathname === "/contact" && <TitleSection title="Contact Us" />}
+        {pathname === "/team" && <TitleSection title="Our Team" />}
+        {pathname === "/blogs" && <TitleSection title="Our Blogs" />}
       </div>
       <div>{children}</div>
       <FooterComponent />

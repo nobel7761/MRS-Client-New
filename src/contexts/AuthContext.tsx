@@ -13,6 +13,7 @@ import {
   AuthContextType,
   AuthState,
   LoginCredentials,
+  RegistrationData,
   User,
   UserRole,
 } from "@/types/auth";
@@ -22,6 +23,12 @@ import Cookies from "js-cookie";
 interface LoginResponse {
   user: User;
   accessToken: string;
+}
+
+interface RegistrationResponse {
+  user: User;
+  accessToken: string;
+  message: string;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -81,6 +88,37 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  const register = async (registrationData: RegistrationData) => {
+    try {
+      const response = await client.post<RegistrationResponse>(
+        "/auth/register",
+        registrationData
+      );
+      const { accessToken, user } = response.data;
+
+      // Set cookies
+      Cookies.set("token", accessToken, { expires: 7 }); // Expires in 7 days
+      Cookies.set("user", JSON.stringify(user), { expires: 7 });
+
+      setState({
+        user,
+        token: accessToken,
+        isAuthenticated: true,
+        isLoading: false,
+      });
+
+      // Redirect to home page after successful registration
+      router.push("/");
+      toast.success("Registration successful! Welcome to NICAA!");
+    } catch (error: any) {
+      const errorMessage =
+        error.response?.data?.message ||
+        "Registration failed. Please try again.";
+      toast.error(errorMessage);
+      throw error;
+    }
+  };
+
   const logout = () => {
     Cookies.remove("token");
     Cookies.remove("user");
@@ -95,7 +133,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ ...state, login, logout }}>
+    <AuthContext.Provider value={{ ...state, login, register, logout }}>
       {children}
     </AuthContext.Provider>
   );

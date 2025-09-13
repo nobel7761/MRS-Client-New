@@ -279,7 +279,7 @@ const FAQComponent = () => {
             </span>
           </p>
 
-          {/* <p className="w-1/2 flex justify-end">
+          <p className="w-1/2 flex justify-end">
             <AnimatedButton
               route="/faqs"
               text="View All FAQs"
@@ -292,7 +292,7 @@ const FAQComponent = () => {
               className="md:w-fit w-full flex justify-center"
               showBackgroundImage={true}
             />
-          </p> */}
+          </p>
         </div>
 
         <div className="flex justify-between gap-x-10">

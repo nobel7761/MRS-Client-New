@@ -1,8 +1,16 @@
 import axios from "axios";
 import { toast } from "react-toastify";
 
+const baseURL =
+  process.env.NEXT_PUBLIC_API_BASE ||
+  (typeof window !== "undefined"
+    ? window.location.origin
+    : "http://localhost:3333");
+
+console.log("API Base URL:", baseURL);
+
 const client = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_BASE,
+  baseURL,
 });
 
 client.interceptors.request.use(

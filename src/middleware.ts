@@ -17,16 +17,29 @@ export function middleware(request: NextRequest) {
     "/login",
     "/register",
     "/faqs",
+    "/about",
+    "/contact",
+    "/team",
+    "/blogs",
     "/representative-registration-reunion-2026",
   ];
-  if (publicRoutes.includes(pathname)) {
-    if (token && user) {
-      const parsedUser = JSON.parse(user);
-      if (parsedUser.role === UserRole.USER) {
-        return NextResponse.redirect(new URL("/", request.url));
-      } else {
-        return NextResponse.redirect(new URL("/admin", request.url));
-      }
+
+  // Check if the current path is a blog detail route (e.g., /blogs/some-slug)
+  const isBlogDetailRoute =
+    pathname.startsWith("/blogs/") && pathname !== "/blogs";
+
+  // Routes that require authentication but are accessible to all authenticated users
+  const authenticatedRoutes = ["/profile"];
+
+  if (publicRoutes.includes(pathname) || isBlogDetailRoute) {
+    // Allow all users (including admin/superadmin) to access public routes and blog detail routes
+    return NextResponse.next();
+  }
+
+  // Handle authenticated routes (accessible to all authenticated users)
+  if (authenticatedRoutes.includes(pathname)) {
+    if (!token || !user) {
+      return NextResponse.redirect(new URL("/login", request.url));
     }
     return NextResponse.next();
   }

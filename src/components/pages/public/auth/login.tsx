@@ -67,12 +67,12 @@ const LoginComponent = () => {
                       priority
                     />
                   </div>
-                  {/* <h2 className="text-3xl md:text-5xl font-extrabold text-gray-800 mb-2 md:mb-4">
+                  <h2 className="text-3xl md:text-5xl font-extrabold text-white mb-2 md:mb-4">
                     NICAA
                   </h2>
-                  <p className="text-gray-600 text-sm md:text-base mb-4 md:mb-8">
+                  <p className="text-white text-sm md:text-base mb-4 md:mb-8">
                     National Ideal College Alumni Association
-                  </p> */}
+                  </p>
                 </div>
               </motion.div>
 
@@ -218,7 +218,7 @@ const LoginComponent = () => {
                     </button>
                   </form>
 
-                  {/* <div className="text-center mt-4 md:mt-6">
+                  <div className="text-center mt-4 md:mt-6">
                     <p className="text-white text-sm md:text-base">
                       Don&apos;t have an account?{" "}
                       <button
@@ -228,7 +228,7 @@ const LoginComponent = () => {
                         Register here
                       </button>
                     </p>
-                  </div> */}
+                  </div>
                 </div>
               </motion.div>
             </>
@@ -253,12 +253,12 @@ const LoginComponent = () => {
                       priority
                     />
                   </div>
-                  {/* <h2 className="text-3xl md:text-5xl font-extrabold mb-2 md:mb-4 text-white">
+                  <h2 className="text-3xl md:text-5xl font-extrabold mb-2 md:mb-4 text-white">
                     NICAA
                   </h2>
                   <p className="text-sm md:text-base mb-4 md:mb-8 text-white">
                     National Ideal College Alumni Association
-                  </p> */}
+                  </p>
                 </div>
               </motion.div>
 

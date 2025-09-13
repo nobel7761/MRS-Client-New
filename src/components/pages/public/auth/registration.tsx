@@ -4,14 +4,15 @@ import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { motion } from "framer-motion";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import { useRouter } from "next/navigation";
+import { useAuth } from "@/contexts/AuthContext";
+import { RegistrationData } from "@/types/auth";
 
 export interface RegistrationFormValues {
   firstName: string;
   lastName: string;
   email: string;
   password: string;
-  phone: string;
+  phoneNumber: string;
 }
 
 interface RegistrationComponentProps {
@@ -24,13 +25,18 @@ const schema = yup.object({
   email: yup.string().email("Invalid email").required("Email is required"),
   password: yup
     .string()
-    .min(6, "Password must be at least 6 characters")
+    .min(8, "Password must be at least 8 characters")
+    .max(16, "Password must be at most 16 characters")
+    .matches(
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/,
+      "Password must contain uppercase, lowercase, number, and special character"
+    )
     .required("Password is required"),
-  phone: yup
+  phoneNumber: yup
     .string()
     .matches(
-      /^\+88[0-9]{11}$/,
-      "Phone number must start with +88 followed by 11 digits"
+      /^(\+8801[3-9]\d{8}|01[3-9]\d{8})$/,
+      "Phone number must be in format: 01[3-9]xxxxxxxx or +8801[3-9]xxxxxxxx"
     )
     .required("Phone number is required"),
 });
@@ -38,7 +44,7 @@ const schema = yup.object({
 const RegistrationComponent = ({
   onLoginClick,
 }: RegistrationComponentProps) => {
-  const router = useRouter();
+  const { register: registerUser } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -51,32 +57,25 @@ const RegistrationComponent = ({
   });
 
   const onSubmit = async (values: RegistrationFormValues) => {
-    // try {
-    //   const response = await fetch(
-    //     `${process.env.NEXT_PUBLIC_API_BASE}/auth/register`,
-    //     {
-    //       method: "POST",
-    //       headers: {
-    //         "Content-Type": "application/json",
-    //       },
-    //       body: JSON.stringify(values),
-    //     }
-    //   );
+    try {
+      setError(null);
+      const registrationData: RegistrationData = {
+        firstName: values.firstName,
+        lastName: values.lastName,
+        email: values.email,
+        phoneNumber: values.phoneNumber,
+        password: values.password,
+      };
 
-    //   const data = await response.json();
-
-    //   if (!response.ok) {
-    //     setError(data.message || "Failed to register");
-    //     return;
-    //   }
-
-    //   login(data.accessToken, data.refreshToken);
-    //   router.push("/");
-    // } catch (error) {
-    //   console.error("Registration error:", error);
-    //   setError(error as string);
-    // }
-    console.log(values);
+      await registerUser(registrationData);
+      // Registration successful - user will be redirected by AuthContext
+    } catch (error: any) {
+      console.error("Registration error:", error);
+      setError(
+        error.response?.data?.message ||
+          "Registration failed. Please try again."
+      );
+    }
   };
 
   // Add animation variants
@@ -196,15 +195,16 @@ const RegistrationComponent = ({
           </motion.div>
 
           <motion.div variants={itemVariants}>
-            <label className="block text-white mb-2">Phone</label>
+            <label className="block text-white mb-2">Phone Number</label>
             <input
               type="tel"
-              {...register("phone")}
+              placeholder="01XXXXXXXXX or +8801XXXXXXXXX"
+              {...register("phoneNumber")}
               className="w-full px-4 py-3 border border-gray-600 rounded-lg focus:outline-none focus:border-primary"
             />
-            {errors.phone && (
+            {errors.phoneNumber && (
               <p className="mt-1 text-red-500 text-sm">
-                {errors.phone.message}
+                {errors.phoneNumber.message}
               </p>
             )}
           </motion.div>

@@ -26,7 +26,7 @@ export const getSidebarItems = (userRole?: UserRole): SidebarItem[] => {
     },
   ];
 
-  // Only show FAQs for SUPER_ADMIN
+  // Only show FAQs and Users for SUPER_ADMIN
   if (userRole === UserRole.SUPER_ADMIN) {
     baseItems.push({
       name: "FAQs",
@@ -39,6 +39,32 @@ export const getSidebarItems = (userRole?: UserRole): SidebarItem[] => {
         {
           name: "All FAQs",
           href: "/admin/faqs/all",
+        },
+      ],
+    });
+
+    baseItems.push({
+      name: "Users",
+      icon: "👤",
+      children: [
+        {
+          name: "Registered Users",
+          href: "/admin/users/registered",
+        },
+        {
+          name: "Event Participants",
+          href: "/admin/users/participants",
+        },
+      ],
+    });
+
+    baseItems.push({
+      name: "Events",
+      icon: "🎉",
+      children: [
+        {
+          name: "All Events",
+          href: "/admin/events",
         },
       ],
     });
