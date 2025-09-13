@@ -56,33 +56,38 @@ const MarqueeScroller: React.FC<MarqueeScrollerProps> = ({
         style={{ transition: "transform 0.1s linear" }}
       >
         <div ref={contentRef} className="flex items-center">
-          {options.map((item, index) => (
-            <div key={index} className="relative h-12 w-32 mx-20 flex-shrink-0">
-              <Image
-                src={item.source}
-                alt={`Client logo ${index + 1}`}
-                fill
-                className="object-contain"
-                sizes="(max-width: 128px) 100vw, 128px"
-              />
-            </div>
-          ))}
+          {Array.isArray(options) &&
+            options.map((item, index) => (
+              <div
+                key={index}
+                className="relative h-12 w-32 mx-20 flex-shrink-0"
+              >
+                <Image
+                  src={item.source}
+                  alt={`Client logo ${index + 1}`}
+                  fill
+                  className="object-contain"
+                  sizes="(max-width: 128px) 100vw, 128px"
+                />
+              </div>
+            ))}
         </div>
         <div className="flex items-center">
-          {options.map((item, index) => (
-            <div
-              key={`clone-${index}`}
-              className="relative h-12 w-32 mx-20 flex-shrink-0"
-            >
-              <Image
-                src={item.source}
-                alt={`Client logo ${index + 1}`}
-                fill
-                className="object-contain"
-                sizes="(max-width: 128px) 100vw, 128px"
-              />
-            </div>
-          ))}
+          {Array.isArray(options) &&
+            options.map((item, index) => (
+              <div
+                key={`clone-${index}`}
+                className="relative h-12 w-32 mx-20 flex-shrink-0"
+              >
+                <Image
+                  src={item.source}
+                  alt={`Client logo ${index + 1}`}
+                  fill
+                  className="object-contain"
+                  sizes="(max-width: 128px) 100vw, 128px"
+                />
+              </div>
+            ))}
         </div>
       </div>
     </div>

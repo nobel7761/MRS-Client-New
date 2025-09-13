@@ -217,7 +217,7 @@ const FAQComponent = () => {
 
   // Process API data and combine with static data if needed
   useLocalEffect(() => {
-    if (apiFaqs && apiFaqs.length > 0) {
+    if (apiFaqs && Array.isArray(apiFaqs) && apiFaqs.length > 0) {
       // Convert API FAQs to HomePageFAQ format
       const apiFaqsFormatted: HomePageFAQ[] = apiFaqs.map((faq, index) => ({
         id: index + 1,
@@ -250,6 +250,10 @@ const FAQComponent = () => {
       // If there's an error, use static data
       setFaqData(staticFaqData);
       console.error("Error fetching FAQs from API:", error);
+    } else if (apiFaqs && !Array.isArray(apiFaqs)) {
+      // If apiFaqs is not an array, use static data
+      setFaqData(staticFaqData);
+      console.warn("API returned non-array data, using static FAQ data");
     }
   }, [apiFaqs, loading, error]);
 
