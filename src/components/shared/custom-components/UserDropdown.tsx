@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useAuth } from "@/contexts/AuthContext";
-import { UserRole } from "@/types/auth";
+import { UserRole, UserType } from "@/types/auth";
 import Link from "next/link";
 import { createPortal } from "react-dom";
 
@@ -18,6 +18,17 @@ const UserDropdown = () => {
 
   const isAdmin =
     user?.role === UserRole.ADMIN || user?.role === UserRole.SUPER_ADMIN;
+
+  const isCollector = user?.userType === UserType.COLLECTOR;
+
+  // Temporary debug - remove after fixing
+  console.log("Current user data:", user);
+  console.log("UserType check:", {
+    userType: user?.userType,
+    UserType_COLLECTOR: UserType.COLLECTOR,
+    isEqual: user?.userType === UserType.COLLECTOR,
+    isCollector,
+  });
 
   // Calculate dropdown position
   const updateDropdownPosition = () => {
@@ -102,8 +113,8 @@ const UserDropdown = () => {
               right: `${dropdownPosition.right}px`,
             }}
           >
-            {/* Dashboard - Only for Admin/SuperAdmin */}
-            {isAdmin && (
+            {/* Dashboard - Only for Admin/SuperAdmin and COLLECTOR */}
+            {(isAdmin || isCollector) && (
               <Link
                 href="/admin"
                 className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"

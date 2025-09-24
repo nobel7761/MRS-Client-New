@@ -13,7 +13,7 @@ export default function TestApiPage() {
     setError(null);
     try {
       console.log("Making API call...");
-      const result = await emailApi.getTodaySchedule();
+      const result = await emailApi.healthCheck();
       console.log("API Response:", result);
       setData(result);
     } catch (err: any) {
@@ -59,10 +59,8 @@ export default function TestApiPage() {
         <h3 className="font-bold">Debug Info:</h3>
         <p>Data type: {typeof data}</p>
         <p>Data is null: {data === null ? "Yes" : "No"}</p>
-        <p>Data has campaigns: {data && data.campaigns ? "Yes" : "No"}</p>
-        {data && data.campaigns && (
-          <p>Campaigns length: {data.campaigns.length}</p>
-        )}
+        <p>Data has status: {data && data.status ? "Yes" : "No"}</p>
+        {data && data.status && <p>Status: {data.status}</p>}
       </div>
     </div>
   );

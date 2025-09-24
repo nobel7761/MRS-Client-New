@@ -66,6 +66,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       );
       const { accessToken, user } = response.data;
 
+      // Debug logging
+      console.log("Login response user:", user);
+      console.log("UserType in response:", user.userType);
+
       // Set cookies
       Cookies.set("token", accessToken, { expires: 7 }); // Expires in 7 days
       Cookies.set("user", JSON.stringify(user), { expires: 7 });

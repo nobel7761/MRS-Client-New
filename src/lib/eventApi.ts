@@ -3,6 +3,7 @@ import {
   Event,
   EventsResponse,
   CreateEventData,
+  CreateEventFormData,
   EventFilters,
 } from "@/types/event";
 
@@ -57,12 +58,166 @@ export const eventApiService = {
     return response.data;
   },
 
+  // Create event with file upload
+  createEventWithFile: async (
+    eventData: CreateEventFormData
+  ): Promise<Event> => {
+    const formData = new FormData();
+
+    // Add image file
+    if (eventData.bannerImage) {
+      formData.append("bannerImage", eventData.bannerImage);
+    }
+
+    // Add event data
+    Object.keys(eventData).forEach((key) => {
+      if (key === "bannerImage") return; // Skip bannerImage as it's handled above
+
+      if (Array.isArray(eventData[key as keyof CreateEventFormData])) {
+        // Handle arrays like specialGuests, pricingRanges
+        const arrayValue = eventData[key as keyof CreateEventFormData] as any[];
+        arrayValue.forEach((item, index) => {
+          if (typeof item === "object" && item !== null) {
+            // Handle pricingRanges objects
+            Object.keys(item).forEach((subKey) => {
+              const value = item[subKey];
+              // Handle boolean and number types properly
+              if (typeof value === "boolean") {
+                formData.append(`${key}[${index}].${subKey}`, value.toString());
+              } else if (typeof value === "number") {
+                formData.append(`${key}[${index}].${subKey}`, value.toString());
+              } else {
+                formData.append(`${key}[${index}].${subKey}`, value);
+              }
+            });
+          } else {
+            // Handle simple arrays like specialGuests
+            formData.append(`${key}[${index}]`, item);
+          }
+        });
+      } else if (
+        typeof eventData[key as keyof CreateEventFormData] === "object" &&
+        eventData[key as keyof CreateEventFormData] !== null
+      ) {
+        // Handle objects like socialMediaLinks
+        const objectValue = eventData[
+          key as keyof CreateEventFormData
+        ] as Record<string, any>;
+        Object.keys(objectValue).forEach((subKey) => {
+          formData.append(`${key}.${subKey}`, objectValue[subKey]);
+        });
+      } else {
+        const value = eventData[key as keyof CreateEventFormData];
+        // Handle boolean and number types properly
+        if (typeof value === "boolean") {
+          formData.append(key, value.toString());
+        } else if (typeof value === "number") {
+          formData.append(key, value.toString());
+        } else {
+          formData.append(key, value as string);
+        }
+      }
+    });
+
+    const response = await eventApi.post("/", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    return response.data;
+  },
+
+  // Upload banner image only
+  uploadBannerImage: async (
+    imageFile: File
+  ): Promise<{ bannerImageUrl: string }> => {
+    const formData = new FormData();
+    formData.append("bannerImage", imageFile);
+
+    const response = await eventApi.post("/upload-banner", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    return response.data;
+  },
+
   // Update event
   updateEvent: async (
     id: string,
     eventData: Partial<CreateEventData>
   ): Promise<Event> => {
     const response = await eventApi.patch(`/${id}`, eventData);
+    return response.data;
+  },
+
+  // Update event with file upload
+  updateEventWithFile: async (
+    id: string,
+    eventData: Partial<CreateEventFormData>
+  ): Promise<Event> => {
+    const formData = new FormData();
+
+    // Add image file if present
+    if (eventData.bannerImage && eventData.bannerImage instanceof File) {
+      formData.append("bannerImage", eventData.bannerImage);
+    }
+
+    // Add event data
+    Object.keys(eventData).forEach((key) => {
+      if (key === "bannerImage") return; // Skip bannerImage as it's handled above
+
+      if (Array.isArray(eventData[key as keyof CreateEventFormData])) {
+        // Handle arrays like specialGuests, pricingRanges
+        const arrayValue = eventData[key as keyof CreateEventFormData] as any[];
+        arrayValue.forEach((item, index) => {
+          if (typeof item === "object" && item !== null) {
+            // Handle pricingRanges objects
+            Object.keys(item).forEach((subKey) => {
+              const value = item[subKey];
+              // Handle boolean and number types properly
+              if (typeof value === "boolean") {
+                formData.append(`${key}[${index}].${subKey}`, value.toString());
+              } else if (typeof value === "number") {
+                formData.append(`${key}[${index}].${subKey}`, value.toString());
+              } else {
+                formData.append(`${key}[${index}].${subKey}`, value);
+              }
+            });
+          } else {
+            // Handle simple arrays like specialGuests
+            formData.append(`${key}[${index}]`, item);
+          }
+        });
+      } else if (
+        typeof eventData[key as keyof CreateEventFormData] === "object" &&
+        eventData[key as keyof CreateEventFormData] !== null
+      ) {
+        // Handle objects like socialMediaLinks
+        const objectValue = eventData[
+          key as keyof CreateEventFormData
+        ] as Record<string, any>;
+        Object.keys(objectValue).forEach((subKey) => {
+          formData.append(`${key}.${subKey}`, objectValue[subKey]);
+        });
+      } else {
+        const value = eventData[key as keyof CreateEventFormData];
+        // Handle boolean and number types properly
+        if (typeof value === "boolean") {
+          formData.append(key, value.toString());
+        } else if (typeof value === "number") {
+          formData.append(key, value.toString());
+        } else {
+          formData.append(key, value as string);
+        }
+      }
+    });
+
+    const response = await eventApi.patch(`/${id}`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
     return response.data;
   },
 

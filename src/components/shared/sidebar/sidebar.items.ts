@@ -1,4 +1,4 @@
-import { UserRole } from "@/types/auth";
+import { UserRole, UserType } from "@/types/auth";
 
 interface SidebarItem {
   name: string;
@@ -12,7 +12,10 @@ interface SidebarChild {
   href: string;
 }
 
-export const getSidebarItems = (userRole?: UserRole): SidebarItem[] => {
+export const getSidebarItems = (
+  userRole?: UserRole,
+  userType?: UserType
+): SidebarItem[] => {
   const baseItems: SidebarItem[] = [
     {
       name: "Dashboard",
@@ -25,6 +28,25 @@ export const getSidebarItems = (userRole?: UserRole): SidebarItem[] => {
       href: "/admin/representative-registration",
     },
   ];
+
+  // Show specific items for COLLECTOR user type
+  if (userType === UserType.COLLECTOR) {
+    baseItems.push({
+      name: "Users",
+      icon: "👤",
+      children: [
+        {
+          name: "Registered Users",
+          href: "/admin/users/registered",
+        },
+        {
+          name: "Event Participants",
+          href: "/admin/users/participants",
+        },
+      ],
+    });
+    return baseItems;
+  }
 
   // Only show FAQs, Users and Email Management for SUPER_ADMIN
   if (userRole === UserRole.SUPER_ADMIN) {
@@ -73,18 +95,6 @@ export const getSidebarItems = (userRole?: UserRole): SidebarItem[] => {
       name: "Email Management",
       icon: "📧",
       children: [
-        {
-          name: "Campaigns",
-          href: "/admin/email/campaigns",
-        },
-        {
-          name: "Today's Schedule",
-          href: "/admin/email/today-schedule",
-        },
-        {
-          name: "Statistics",
-          href: "/admin/email/stats",
-        },
         {
           name: "Test Configuration",
           href: "/admin/email/test",

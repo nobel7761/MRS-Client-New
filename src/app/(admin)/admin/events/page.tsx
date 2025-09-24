@@ -59,6 +59,7 @@ import {
   EventVisibility,
   EventFilters,
   CreateEventData,
+  CreateEventFormData,
 } from "@/types/event";
 import { eventApiService } from "@/lib/eventApi";
 import { useAuth } from "@/contexts/AuthContext";
@@ -161,10 +162,21 @@ const EventsPage = () => {
     }
   };
 
-  const handleCreateEvent = async (eventData: CreateEventData) => {
+  const handleCreateEvent = async (
+    eventData: CreateEventData | CreateEventFormData
+  ) => {
     try {
       setCreateLoading(true);
-      await eventApiService.createEvent(eventData);
+
+      // Check if it's a file upload (CreateEventFormData) or URL input (CreateEventData)
+      if ("bannerImage" in eventData && eventData.bannerImage instanceof File) {
+        await eventApiService.createEventWithFile(
+          eventData as CreateEventFormData
+        );
+      } else {
+        await eventApiService.createEvent(eventData as CreateEventData);
+      }
+
       setCreateDialogOpen(false);
       fetchEvents();
     } catch (err) {
@@ -185,12 +197,27 @@ const EventsPage = () => {
     setEditDialogOpen(true);
   };
 
-  const handleUpdateEvent = async (eventData: CreateEventData) => {
+  const handleUpdateEvent = async (
+    eventData: CreateEventData | CreateEventFormData
+  ) => {
     if (!selectedEvent) return;
 
     try {
       setEditLoading(true);
-      await eventApiService.updateEvent(selectedEvent._id, eventData);
+
+      // Check if it's a file upload (CreateEventFormData) or URL input (CreateEventData)
+      if ("bannerImage" in eventData && eventData.bannerImage instanceof File) {
+        await eventApiService.updateEventWithFile(
+          selectedEvent._id,
+          eventData as CreateEventFormData
+        );
+      } else {
+        await eventApiService.updateEvent(
+          selectedEvent._id,
+          eventData as CreateEventData
+        );
+      }
+
       setEditDialogOpen(false);
       setSelectedEvent(null);
       fetchEvents();

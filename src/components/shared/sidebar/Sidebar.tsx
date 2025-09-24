@@ -27,11 +27,11 @@ const Sidebar = ({ isCollapsed, setIsCollapsed }: SidebarProps) => {
   const pathname = usePathname();
   const router = useRouter();
   const { logout } = useAuth();
-  const { userRole } = useRoleAccess();
+  const { userRole, userType } = useRoleAccess();
   const [expandedItems, setExpandedItems] = useState<string[]>([]);
 
   // Get role-based sidebar items
-  const sidebarItems = getSidebarItems(userRole);
+  const sidebarItems = getSidebarItems(userRole, userType);
 
   const handleLogout = () => {
     logout();

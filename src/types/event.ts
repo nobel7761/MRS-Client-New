@@ -54,7 +54,27 @@ export interface CreateEventData {
   title: string;
   shortDescription: string;
   fullDescription: string;
-  bannerImage: string;
+  bannerImage: string | File;
+  date: string;
+  startsTime: string;
+  venue: string;
+  googleMapLink?: string;
+  organizerName: string;
+  organizerContactInfo: string;
+  specialGuests?: string[];
+  isPaidEvent: boolean;
+  pricingRanges?: PricingRange[];
+  seatLimit: number;
+  socialMediaLinks?: SocialMediaLinks;
+  status?: EventStatus;
+  visibility?: EventVisibility;
+}
+
+export interface CreateEventFormData {
+  title: string;
+  shortDescription: string;
+  fullDescription: string;
+  bannerImage: File;
   date: string;
   startsTime: string;
   venue: string;

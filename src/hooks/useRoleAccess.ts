@@ -1,5 +1,5 @@
 import { useAuth } from "@/contexts/AuthContext";
-import { UserRole } from "@/types/auth";
+import { UserRole, UserType } from "@/types/auth";
 
 export const useRoleAccess = () => {
   const { user } = useAuth();
@@ -32,5 +32,6 @@ export const useRoleAccess = () => {
     isUser,
     canAccessFaqs,
     userRole: user?.role,
+    userType: user?.userType,
   };
 };

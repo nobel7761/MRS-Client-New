@@ -29,10 +29,18 @@ import {
 import {
   Event,
   CreateEventData,
+  CreateEventFormData,
   EventStatus,
   EventVisibility,
   PricingRange,
 } from "@/types/event";
+import {
+  validateFileForUpload,
+  createImagePreview,
+  revokeImagePreview,
+  SUPPORTED_FILE_TYPES,
+  FILE_SIZE_LIMITS,
+} from "@/utils/imageUpload";
 
 // Dynamic import for React Quill to avoid SSR issues
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
@@ -71,7 +79,7 @@ const quillFormats = [
 interface EventFormProps {
   open: boolean;
   onClose: () => void;
-  onSubmit: (eventData: CreateEventData) => void;
+  onSubmit: (eventData: CreateEventData | CreateEventFormData) => void;
   loading?: boolean;
   event?: Event | null;
   mode?: "create" | "edit";
@@ -118,6 +126,18 @@ const EventForm: React.FC<EventFormProps> = ({
     description: "",
     isPopular: false,
   });
+
+  // File upload states
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string>("");
+  const [fileValidation, setFileValidation] = useState<{
+    isValid: boolean;
+    error?: string;
+    fileType: "image" | "video" | "unknown";
+    fileSize: string;
+    fileSizeMB: number;
+  } | null>(null);
+  const [useFileUpload, setUseFileUpload] = useState(true); // Toggle between file upload and URL input
 
   // Helper function to format date for HTML date input
   const formatDateForInput = (dateString: string) => {
@@ -320,6 +340,51 @@ const EventForm: React.FC<EventFormProps> = ({
     }));
   };
 
+  // File handling functions
+  const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    // Validate file
+    const validation = validateFileForUpload(file);
+    setFileValidation(validation);
+
+    if (validation.isValid) {
+      setSelectedFile(file);
+
+      // Create preview for images
+      if (validation.fileType === "image") {
+        const previewUrl = createImagePreview(file);
+        setImagePreview(previewUrl);
+      } else {
+        setImagePreview("");
+      }
+    } else {
+      setSelectedFile(null);
+      setImagePreview("");
+    }
+  };
+
+  const handleRemoveFile = () => {
+    if (imagePreview) {
+      revokeImagePreview(imagePreview);
+    }
+    setSelectedFile(null);
+    setImagePreview("");
+    setFileValidation(null);
+  };
+
+  const toggleUploadMethod = () => {
+    setUseFileUpload(!useFileUpload);
+    if (useFileUpload) {
+      // Switching to URL input, clear file data
+      handleRemoveFile();
+    } else {
+      // Switching to file upload, clear URL
+      setFormData((prev) => ({ ...prev, bannerImage: "" }));
+    }
+  };
+
   const validateForm = (): boolean => {
     const newErrors: Record<string, string> = {};
 
@@ -328,8 +393,19 @@ const EventForm: React.FC<EventFormProps> = ({
       newErrors.shortDescription = "Short description is required";
     if (!formData.fullDescription.trim())
       newErrors.fullDescription = "Full description is required";
-    if (!formData.bannerImage.trim())
-      newErrors.bannerImage = "Banner image URL is required";
+    if (useFileUpload) {
+      if (!selectedFile) {
+        newErrors.bannerImage = "Please select a banner image file";
+      } else if (fileValidation && !fileValidation.isValid) {
+        newErrors.bannerImage = fileValidation.error || "Invalid file";
+      }
+    } else {
+      if (
+        typeof formData.bannerImage === "string" &&
+        !formData.bannerImage.trim()
+      )
+        newErrors.bannerImage = "Banner image URL is required";
+    }
     if (!formData.date) newErrors.date = "Date is required";
     if (!formData.startsTime.trim())
       newErrors.startsTime = "Start time is required";
@@ -353,11 +429,47 @@ const EventForm: React.FC<EventFormProps> = ({
 
   const handleSubmit = () => {
     if (validateForm()) {
-      onSubmit(formData);
+      console.log("Form validation passed");
+      console.log("useFileUpload:", useFileUpload);
+      console.log("selectedFile:", selectedFile);
+      console.log("formData.bannerImage:", formData.bannerImage);
+      console.log("typeof formData.bannerImage:", typeof formData.bannerImage);
+
+      if (useFileUpload && selectedFile) {
+        // Create form data with file
+        const formDataWithFile: CreateEventFormData = {
+          ...formData,
+          bannerImage: selectedFile,
+        };
+        console.log("Sending data with file:", formDataWithFile);
+        onSubmit(formDataWithFile);
+      } else if (!useFileUpload && typeof formData.bannerImage === "string") {
+        // Use regular form data with URL
+        console.log("Sending data with URL:", formData);
+        onSubmit(formData);
+      } else {
+        // This shouldn't happen if validation passes, but just in case
+        console.error(
+          "Invalid form state: useFileUpload=",
+          useFileUpload,
+          "selectedFile=",
+          selectedFile,
+          "bannerImage=",
+          formData.bannerImage
+        );
+        setErrors({
+          bannerImage: "Please select a banner image or provide a URL",
+        });
+      }
     }
   };
 
   const handleClose = () => {
+    // Clean up file preview
+    if (imagePreview) {
+      revokeImagePreview(imagePreview);
+    }
+
     setFormData({
       title: "",
       shortDescription: "",
@@ -384,6 +496,13 @@ const EventForm: React.FC<EventFormProps> = ({
       visibility: EventVisibility.PUBLIC,
     });
     setErrors({});
+
+    // Reset file upload states
+    setSelectedFile(null);
+    setImagePreview("");
+    setFileValidation(null);
+    setUseFileUpload(true);
+
     onClose();
   };
 
@@ -424,15 +543,140 @@ const EventForm: React.FC<EventFormProps> = ({
               required
             />
 
-            <TextField
-              fullWidth
-              label="Banner Image URL"
-              value={formData.bannerImage}
-              onChange={(e) => handleInputChange("bannerImage", e.target.value)}
-              error={!!errors.bannerImage}
-              helperText={errors.bannerImage}
-              required
-            />
+            {/* Banner Image Upload Section */}
+            <Box sx={{ width: "100%" }}>
+              <Typography variant="h6" gutterBottom>
+                Banner Image
+              </Typography>
+
+              {/* Toggle between file upload and URL input */}
+              <FormControlLabel
+                control={
+                  <Switch
+                    checked={useFileUpload}
+                    onChange={toggleUploadMethod}
+                    color="primary"
+                  />
+                }
+                label={useFileUpload ? "Upload from device" : "Use URL"}
+                sx={{ mb: 2 }}
+              />
+
+              {useFileUpload ? (
+                <Box>
+                  {/* File Upload Input */}
+                  <input
+                    accept={SUPPORTED_FILE_TYPES.join(",")}
+                    style={{ display: "none" }}
+                    id="banner-image-upload"
+                    type="file"
+                    onChange={handleFileSelect}
+                  />
+                  <label htmlFor="banner-image-upload">
+                    <Button
+                      variant="outlined"
+                      component="span"
+                      startIcon={<AddIcon />}
+                      sx={{ mb: 2 }}
+                    >
+                      Select Banner Image/Video
+                    </Button>
+                  </label>
+
+                  {/* File Info and Preview */}
+                  {selectedFile && (
+                    <Box sx={{ mt: 2 }}>
+                      <Box
+                        sx={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: 2,
+                          mb: 2,
+                        }}
+                      >
+                        <Typography variant="body2" color="text.secondary">
+                          Selected: {selectedFile.name} (
+                          {fileValidation?.fileSize})
+                        </Typography>
+                        <IconButton size="small" onClick={handleRemoveFile}>
+                          <DeleteIcon />
+                        </IconButton>
+                      </Box>
+
+                      {/* Image Preview */}
+                      {imagePreview && (
+                        <Box sx={{ mb: 2 }}>
+                          <img
+                            src={imagePreview}
+                            alt="Banner preview"
+                            style={{
+                              maxWidth: "100%",
+                              maxHeight: "200px",
+                              objectFit: "contain",
+                              border: "1px solid #ddd",
+                              borderRadius: "4px",
+                            }}
+                          />
+                        </Box>
+                      )}
+
+                      {/* File Type Info */}
+                      {fileValidation && (
+                        <Chip
+                          label={`${fileValidation.fileType.toUpperCase()} - ${
+                            fileValidation.fileSize
+                          }`}
+                          color={fileValidation.isValid ? "success" : "error"}
+                          size="small"
+                        />
+                      )}
+                    </Box>
+                  )}
+
+                  {/* File Validation Error */}
+                  {fileValidation && !fileValidation.isValid && (
+                    <Alert severity="error" sx={{ mt: 1 }}>
+                      {fileValidation.error}
+                    </Alert>
+                  )}
+
+                  {/* File Requirements Info */}
+                  <Typography
+                    variant="caption"
+                    color="text.secondary"
+                    display="block"
+                    sx={{ mt: 1 }}
+                  >
+                    Supported formats: Images (JPG, PNG, GIF, WebP, SVG, BMP,
+                    TIFF, ICO) and Videos (MP4, MOV, AVI, WMV, FLV, WebM, 3GP,
+                    MKV, M4V, MPG, MPEG, OGV, OGG)
+                    <br />
+                    Maximum file size: {FILE_SIZE_LIMITS.maxSizeInMB}MB
+                  </Typography>
+                </Box>
+              ) : (
+                <TextField
+                  fullWidth
+                  label="Banner Image URL"
+                  value={formData.bannerImage}
+                  onChange={(e) =>
+                    handleInputChange("bannerImage", e.target.value)
+                  }
+                  error={!!errors.bannerImage}
+                  helperText={
+                    errors.bannerImage || "Enter the URL of the banner image"
+                  }
+                  required
+                />
+              )}
+
+              {/* General Error Display */}
+              {errors.bannerImage && (
+                <Alert severity="error" sx={{ mt: 1 }}>
+                  {errors.bannerImage}
+                </Alert>
+              )}
+            </Box>
           </Box>
 
           <TextField

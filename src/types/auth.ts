@@ -10,10 +10,8 @@ export enum UserStatus {
 }
 
 export enum UserType {
-  MARKETING = "MARKETING",
-  HR = "HR",
-  OPERATIONS = "OPERATIONS",
-  EMPLOYEE = "EMPLOYEE",
+  VISITOR = "VISITOR",
+  COLLECTOR = "COLLECTOR",
   OWNER = "OWNER",
 }
 

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import crypto from "crypto";
+import { UserType } from "@/types/auth";
 
 // Mock user storage - in production, this would be a database
 const users: any[] = [];
@@ -102,7 +103,7 @@ export async function POST(request: NextRequest) {
       password: `${salt}:${hashedPassword}`, // Store salt with password
       role: "USER",
       status: "ACTIVE",
-      userType: "EMPLOYEE",
+      userType: UserType.VISITOR, // Default userType, should be set by admin or through proper user management
       createdAt: new Date().toISOString(),
     };
 
