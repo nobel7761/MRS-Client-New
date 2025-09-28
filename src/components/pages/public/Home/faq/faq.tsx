@@ -235,17 +235,12 @@ const FAQComponent = () => {
             id: apiFaqsFormatted.length + index + 1,
           }));
         setFaqData([...apiFaqsFormatted, ...staticFaqsToAdd]);
-        console.log(
-          `Loaded ${apiFaqsFormatted.length} FAQs from API, added ${remainingCount} static FAQs`
-        );
       } else {
         setFaqData(apiFaqsFormatted);
-        console.log(`Loaded ${apiFaqsFormatted.length} FAQs from API`);
       }
     } else if (!loading && !error) {
       // If no API data and not loading, use static data
       setFaqData(staticFaqData);
-      console.log("No API data available, using static FAQ data");
     } else if (error) {
       // If there's an error, use static data
       setFaqData(staticFaqData);

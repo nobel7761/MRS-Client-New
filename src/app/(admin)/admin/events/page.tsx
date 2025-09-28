@@ -149,9 +149,8 @@ const EventsPage = () => {
     }
 
     try {
-      console.log("Attempting to delete event:", eventToDelete._id);
       await eventApiService.deleteEvent(eventToDelete._id);
-      console.log("Event deleted successfully");
+
       setDeleteDialogOpen(false);
       setEventToDelete(null);
       setDeleteConfirmationText("");

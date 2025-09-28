@@ -19,16 +19,9 @@ const UserDropdown = () => {
   const isAdmin =
     user?.role === UserRole.ADMIN || user?.role === UserRole.SUPER_ADMIN;
 
-  const isCollector = user?.userType === UserType.COLLECTOR;
-
-  // Temporary debug - remove after fixing
-  console.log("Current user data:", user);
-  console.log("UserType check:", {
-    userType: user?.userType,
-    UserType_COLLECTOR: UserType.COLLECTOR,
-    isEqual: user?.userType === UserType.COLLECTOR,
-    isCollector,
-  });
+  // Handle both userType and usetType (typo in backend data)
+  const userType = user?.userType || (user as any)?.usetType;
+  const isCollector = userType === UserType.COLLECTOR;
 
   // Calculate dropdown position
   const updateDropdownPosition = () => {
@@ -113,7 +106,7 @@ const UserDropdown = () => {
               right: `${dropdownPosition.right}px`,
             }}
           >
-            {/* Dashboard - Only for Admin/SuperAdmin and COLLECTOR */}
+            {/* Dashboard - Only for Admin/SuperAdmin and COLLECTOR (any role) */}
             {(isAdmin || isCollector) && (
               <Link
                 href="/admin"

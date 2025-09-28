@@ -210,8 +210,6 @@ const EventForm: React.FC<EventFormProps> = ({
   // Populate form when editing an existing event
   React.useEffect(() => {
     if (mode === "edit" && event) {
-      console.log("Event date:", event.date);
-      console.log("Formatted date:", formatDateForInput(event.date || ""));
       setFormData({
         title: event.title || "",
         shortDescription: event.shortDescription || "",
@@ -429,23 +427,17 @@ const EventForm: React.FC<EventFormProps> = ({
 
   const handleSubmit = () => {
     if (validateForm()) {
-      console.log("Form validation passed");
-      console.log("useFileUpload:", useFileUpload);
-      console.log("selectedFile:", selectedFile);
-      console.log("formData.bannerImage:", formData.bannerImage);
-      console.log("typeof formData.bannerImage:", typeof formData.bannerImage);
-
       if (useFileUpload && selectedFile) {
         // Create form data with file
         const formDataWithFile: CreateEventFormData = {
           ...formData,
           bannerImage: selectedFile,
         };
-        console.log("Sending data with file:", formDataWithFile);
+
         onSubmit(formDataWithFile);
       } else if (!useFileUpload && typeof formData.bannerImage === "string") {
         // Use regular form data with URL
-        console.log("Sending data with URL:", formData);
+
         onSubmit(formData);
       } else {
         // This shouldn't happen if validation passes, but just in case

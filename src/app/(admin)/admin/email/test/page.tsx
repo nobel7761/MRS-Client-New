@@ -161,8 +161,6 @@ export default function EmailTestPage() {
     try {
       setSendingTest(true);
 
-      console.log("data", data);
-
       // Direct API call to the test endpoint
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_BASE}/email/send-test`,

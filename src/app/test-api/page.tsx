@@ -12,9 +12,8 @@ export default function TestApiPage() {
     setLoading(true);
     setError(null);
     try {
-      console.log("Making API call...");
       const result = await emailApi.healthCheck();
-      console.log("API Response:", result);
+
       setData(result);
     } catch (err: any) {
       console.error("API Error:", err);

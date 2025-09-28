@@ -6,7 +6,7 @@ import backgroundImage from "@/public/background.jpg";
 import { MUIDataTableColumnDef, MUIDataTableOptions } from "mui-datatables";
 import MUIDataTableImport from "mui-datatables";
 import { toast } from "react-toastify";
-import client from "@/lib/api";
+import directApi from "@/lib/directApi";
 
 const MUIDataTable = MUIDataTableImport as unknown as React.ComponentType<any>;
 

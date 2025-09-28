@@ -9,7 +9,6 @@ import {
 
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_BASE || "http://localhost:3333";
-console.log("Event API Base URL:", API_BASE_URL);
 
 const eventApi = axios.create({
   baseURL: `${API_BASE_URL}/events`,
@@ -223,10 +222,8 @@ export const eventApiService = {
 
   // Delete event
   deleteEvent: async (id: string): Promise<void> => {
-    console.log("Deleting event with ID:", id);
-    console.log("Delete URL:", `${eventApi.defaults.baseURL}/${id}`);
     const response = await eventApi.delete(`/${id}`);
-    console.log("Delete response:", response);
+
     return response.data;
   },
 

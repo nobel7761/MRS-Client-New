@@ -14,7 +14,7 @@ interface SidebarChild {
 
 export const getSidebarItems = (
   userRole?: UserRole,
-  userType?: UserType
+  userType?: UserType | string
 ): SidebarItem[] => {
   const baseItems: SidebarItem[] = [
     {
@@ -29,27 +29,24 @@ export const getSidebarItems = (
     },
   ];
 
-  // Show specific items for COLLECTOR user type
-  if (userType === UserType.COLLECTOR) {
+  // Admin + COLLECTOR or User + COLLECTOR: Access to Dashboard, Representative Registration, Users
+  if (
+    (userRole === UserRole.ADMIN || userRole === UserRole.USER) &&
+    userType === UserType.COLLECTOR
+  ) {
     baseItems.push({
       name: "Users",
       icon: "👤",
-      children: [
-        {
-          name: "Registered Users",
-          href: "/admin/users/registered",
-        },
-        {
-          name: "Event Participants",
-          href: "/admin/users/participants",
-        },
-      ],
+      href: "/admin/users/registered",
     });
     return baseItems;
   }
 
-  // Only show FAQs, Users and Email Management for SUPER_ADMIN
-  if (userRole === UserRole.SUPER_ADMIN) {
+  // SuperAdmin + OWNER: Access to all sidebar options
+  if (
+    userRole === UserRole.SUPER_ADMIN &&
+    (userType === UserType.OWNER || userType === "OWNER")
+  ) {
     baseItems.push({
       name: "FAQs",
       icon: "❔",
@@ -68,16 +65,7 @@ export const getSidebarItems = (
     baseItems.push({
       name: "Users",
       icon: "👤",
-      children: [
-        {
-          name: "Registered Users",
-          href: "/admin/users/registered",
-        },
-        {
-          name: "Event Participants",
-          href: "/admin/users/participants",
-        },
-      ],
+      href: "/admin/users/registered",
     });
 
     baseItems.push({

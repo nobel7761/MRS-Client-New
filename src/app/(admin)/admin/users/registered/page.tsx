@@ -6,12 +6,19 @@ import backgroundImage from "@/public/background.jpg";
 import { MUIDataTableColumnDef, MUIDataTableOptions } from "mui-datatables";
 import MUIDataTableImport from "mui-datatables";
 import { toast } from "react-toastify";
-import client from "@/lib/api";
-import { User, UserRole, UserStatus, MembershipCategory } from "@/types/auth";
+import directApi from "@/lib/directApi";
+import {
+  User,
+  UserRole,
+  UserStatus,
+  UserType,
+  MembershipCategory,
+} from "@/types/auth";
 import { useAuth } from "@/contexts/AuthContext";
 import Link from "next/link";
 import Button from "@mui/material/Button";
 import AnimatedButton from "@/components/shared/custom-components/animated-button";
+import StatusChip from "@/components/shared/custom-components/StatusChip";
 
 const MUIDataTable = MUIDataTableImport as unknown as React.ComponentType<any>;
 
@@ -50,7 +57,7 @@ const RegisteredUsersPage = () => {
 
   const fetchData = async () => {
     try {
-      const response = await client.get("/user/all");
+      const response = await directApi.get("/user/all");
       setData(response.data);
     } catch (error) {
       console.error("Error fetching users data:", error);
@@ -72,18 +79,6 @@ const RegisteredUsersPage = () => {
     });
   };
 
-  const getStatusBadge = (status: UserStatus) => {
-    const baseClasses = "px-2 py-1 rounded-full text-xs font-medium";
-    switch (status) {
-      case UserStatus.ACTIVE:
-        return `${baseClasses} bg-green-100 text-green-800`;
-      case UserStatus.INACTIVE:
-        return `${baseClasses} bg-red-100 text-red-800`;
-      default:
-        return `${baseClasses} bg-gray-100 text-gray-800`;
-    }
-  };
-
   const getStatusDisplayText = (status: UserStatus) => {
     switch (status) {
       case UserStatus.ACTIVE:
@@ -92,20 +87,6 @@ const RegisteredUsersPage = () => {
         return "Inactive";
       default:
         return status;
-    }
-  };
-
-  const getRoleBadge = (role: UserRole) => {
-    const baseClasses = "px-2 py-1 rounded-full text-xs font-medium";
-    switch (role) {
-      case UserRole.SUPER_ADMIN:
-        return `${baseClasses} bg-purple-100 text-purple-800`;
-      case UserRole.ADMIN:
-        return `${baseClasses} bg-blue-100 text-blue-800`;
-      case UserRole.USER:
-        return `${baseClasses} bg-gray-100 text-gray-800`;
-      default:
-        return `${baseClasses} bg-gray-100 text-gray-800`;
     }
   };
 
@@ -122,17 +103,16 @@ const RegisteredUsersPage = () => {
     }
   };
 
-  const getMembershipBadge = (membership: MembershipCategory) => {
-    const baseClasses = "px-2 py-1 rounded-full text-xs font-medium";
-    switch (membership) {
-      case MembershipCategory.FREE:
-        return `${baseClasses} bg-gray-100 text-gray-800`;
-      case MembershipCategory.YEARLY:
-        return `${baseClasses} bg-yellow-100 text-yellow-800`;
-      case MembershipCategory.PERMANENT:
-        return `${baseClasses} bg-green-100 text-green-800`;
+  const getUserTypeDisplayText = (userType: UserType) => {
+    switch (userType) {
+      case UserType.OWNER:
+        return "Owner";
+      case UserType.COLLECTOR:
+        return "Collector";
+      case UserType.VISITOR:
+        return "Visitor";
       default:
-        return `${baseClasses} bg-gray-100 text-gray-800`;
+        return userType;
     }
   };
 
@@ -146,6 +126,22 @@ const RegisteredUsersPage = () => {
         return "Permanent";
       default:
         return membership || "Free";
+    }
+  };
+
+  const getMembershipChipStyles = (membership: MembershipCategory) => {
+    const baseClasses =
+      "inline-flex items-center px-3 py-1.5 rounded-full text-xs font-semibold shadow-sm transition-all duration-200 hover:shadow-md";
+
+    switch (membership) {
+      case MembershipCategory.FREE:
+        return `${baseClasses} bg-gradient-to-r from-gray-500 to-gray-600 text-white border border-gray-300`;
+      case MembershipCategory.YEARLY:
+        return `${baseClasses} bg-gradient-to-r from-yellow-500 to-yellow-600 text-white border border-yellow-300`;
+      case MembershipCategory.PERMANENT:
+        return `${baseClasses} bg-gradient-to-r from-emerald-500 to-emerald-600 text-white border border-emerald-300`;
+      default:
+        return `${baseClasses} bg-gradient-to-r from-gray-400 to-gray-500 text-white border border-gray-300`;
     }
   };
 
@@ -186,9 +182,9 @@ const RegisteredUsersPage = () => {
         filter: true,
         sort: true,
         customBodyRender: (value: UserRole) => (
-          <span className={getRoleBadge(value)}>
+          <StatusChip variant="role" value={value}>
             {getRoleDisplayText(value)}
-          </span>
+          </StatusChip>
         ),
       },
     },
@@ -199,9 +195,22 @@ const RegisteredUsersPage = () => {
         filter: true,
         sort: true,
         customBodyRender: (value: UserStatus) => (
-          <span className={getStatusBadge(value)}>
+          <StatusChip variant="status" value={value}>
             {getStatusDisplayText(value)}
-          </span>
+          </StatusChip>
+        ),
+      },
+    },
+    {
+      name: "userType",
+      label: "User Type",
+      options: {
+        filter: true,
+        sort: true,
+        customBodyRender: (value: UserType) => (
+          <StatusChip variant="userType" value={value}>
+            {getUserTypeDisplayText(value)}
+          </StatusChip>
         ),
       },
     },
@@ -211,8 +220,9 @@ const RegisteredUsersPage = () => {
       options: {
         filter: true,
         sort: true,
+        display: false, // Hidden by default
         customBodyRender: (value: MembershipCategory) => (
-          <span className={getMembershipBadge(value)}>
+          <span className={getMembershipChipStyles(value)}>
             {getMembershipDisplayText(value)}
           </span>
         ),
@@ -224,6 +234,7 @@ const RegisteredUsersPage = () => {
       options: {
         filter: true,
         sort: true,
+        display: false, // Hidden by default
         customBodyRender: (value: string) => formatDate(value),
       },
     },

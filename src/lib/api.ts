@@ -1,5 +1,6 @@
 import axios from "axios";
 import { toast } from "react-toastify";
+import Cookies from "js-cookie";
 
 const baseURL =
   process.env.NEXT_PUBLIC_API_BASE ||
@@ -7,18 +8,18 @@ const baseURL =
     ? window.location.origin
     : "http://localhost:3333");
 
-console.log("API Base URL:", baseURL);
-
 const client = axios.create({
   baseURL,
 });
 
 client.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem("token");
+    const token = Cookies.get("token");
+
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
+
     return config;
   },
   (error) => {
@@ -27,11 +28,13 @@ client.interceptors.request.use(
 );
 
 client.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    return response;
+  },
   (error) => {
     if (error.response?.status === 401) {
-      localStorage.removeItem("token");
-      localStorage.removeItem("user");
+      Cookies.remove("token", { path: "/" });
+      Cookies.remove("user", { path: "/" });
       window.location.href = "/login";
       toast.error("Session expired. Please login again.");
     }

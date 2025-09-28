@@ -44,8 +44,6 @@ const EventCard: React.FC<EventCardProps> = ({
   onDelete,
   onView,
 }) => {
-  console.log("EventCard rendered with event:", event);
-  console.log("Event _id:", event._id);
   const getStatusColor = (status: EventStatus) => {
     switch (status) {
       case EventStatus.UPCOMING:
@@ -587,11 +585,6 @@ const EventCard: React.FC<EventCardProps> = ({
                 size="small"
                 color="error"
                 onClick={() => {
-                  console.log(
-                    "Delete button clicked in EventCard, event._id:",
-                    event._id
-                  );
-                  console.log("onDelete function:", onDelete);
                   onDelete?.(event._id);
                 }}
               >

@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { UserRole } from "@/types/auth";
+import { UserRole, UserType } from "@/types/auth";
 export function middleware(request: NextRequest) {
   const token = request.cookies.get("token")?.value;
   const user = request.cookies.get("user")?.value;
@@ -54,16 +54,46 @@ export function middleware(request: NextRequest) {
 
   // Admin routes protection
   if (pathname.startsWith("/admin")) {
-    if (
-      parsedUser.role !== UserRole.ADMIN &&
-      parsedUser.role !== UserRole.SUPER_ADMIN
-    ) {
+    // Handle both userType and usetType (typo in backend data)
+    const userType = parsedUser.userType || parsedUser.usetType;
+
+    // Check if user has proper role and userType combination
+    const hasValidAccess =
+      (parsedUser.role === UserRole.SUPER_ADMIN &&
+        userType === UserType.OWNER) ||
+      (parsedUser.role === UserRole.ADMIN && userType === UserType.COLLECTOR) ||
+      (parsedUser.role === UserRole.USER && userType === UserType.COLLECTOR);
+
+    if (!hasValidAccess) {
       return NextResponse.redirect(new URL("/", request.url));
     }
 
-    // FAQs routes protection - only SUPER_ADMIN can access
+    // FAQs routes protection - only SUPER_ADMIN + OWNER can access
     if (pathname.startsWith("/admin/faqs")) {
-      if (parsedUser.role !== UserRole.SUPER_ADMIN) {
+      if (
+        parsedUser.role !== UserRole.SUPER_ADMIN ||
+        userType !== UserType.OWNER
+      ) {
+        return NextResponse.redirect(new URL("/admin", request.url));
+      }
+    }
+
+    // Events routes protection - only SUPER_ADMIN + OWNER can access
+    if (pathname.startsWith("/admin/events")) {
+      if (
+        parsedUser.role !== UserRole.SUPER_ADMIN ||
+        userType !== UserType.OWNER
+      ) {
+        return NextResponse.redirect(new URL("/admin", request.url));
+      }
+    }
+
+    // Email Management routes protection - only SUPER_ADMIN + OWNER can access
+    if (pathname.startsWith("/admin/email")) {
+      if (
+        parsedUser.role !== UserRole.SUPER_ADMIN ||
+        userType !== UserType.OWNER
+      ) {
         return NextResponse.redirect(new URL("/admin", request.url));
       }
     }

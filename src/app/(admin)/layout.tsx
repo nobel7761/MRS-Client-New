@@ -2,7 +2,7 @@
 
 import Sidebar from "@/components/shared/sidebar/Sidebar";
 import { useAuth } from "@/contexts/AuthContext";
-import { UserRole } from "@/types/auth";
+import { UserRole, UserType } from "@/types/auth";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import PageLoader from "@/components/PageLoader";
@@ -14,15 +14,25 @@ export default function AdminLayout({
 }) {
   const { user, isAuthenticated, isLoading } = useAuth();
   const [isCollapsed, setIsCollapsed] = useState(false);
-  const [showLoader, setShowLoader] = useState(true);
   const router = useRouter();
 
   useEffect(() => {
     if (!isLoading) {
       if (!isAuthenticated) {
         router.push("/");
-      } else if (user?.role === UserRole.USER) {
-        router.push("/");
+      } else {
+        // Check if user has proper role and userType combination for admin access
+        // Handle both userType and usetType (typo in backend data)
+        const userType = user?.userType || (user as any)?.usetType;
+        const hasValidAccess =
+          (user?.role === UserRole.SUPER_ADMIN &&
+            userType === UserType.OWNER) ||
+          (user?.role === UserRole.ADMIN && userType === UserType.COLLECTOR) ||
+          (user?.role === UserRole.USER && userType === UserType.COLLECTOR);
+
+        if (!hasValidAccess) {
+          router.push("/");
+        }
       }
     }
   }, [isAuthenticated, isLoading, user, router]);
@@ -31,7 +41,19 @@ export default function AdminLayout({
     return <PageLoader />;
   }
 
-  if (!isAuthenticated || user?.role === UserRole.USER) {
+  if (!isAuthenticated) {
+    return null;
+  }
+
+  // Check if user has proper role and userType combination for admin access
+  // Handle both userType and usetType (typo in backend data)
+  const userType = user?.userType || (user as any)?.usetType;
+  const hasValidAccess =
+    (user?.role === UserRole.SUPER_ADMIN && userType === UserType.OWNER) ||
+    (user?.role === UserRole.ADMIN && userType === UserType.COLLECTOR) ||
+    (user?.role === UserRole.USER && userType === UserType.COLLECTOR);
+
+  if (!hasValidAccess) {
     return null;
   }
 

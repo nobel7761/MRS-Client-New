@@ -16,6 +16,7 @@ import {
   RegistrationData,
   User,
   UserRole,
+  UserType,
 } from "@/types/auth";
 import client from "@/lib/api";
 import Cookies from "js-cookie";
@@ -66,13 +67,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       );
       const { accessToken, user } = response.data;
 
-      // Debug logging
-      console.log("Login response user:", user);
-      console.log("UserType in response:", user.userType);
-
       // Set cookies
-      Cookies.set("token", accessToken, { expires: 7 }); // Expires in 7 days
-      Cookies.set("user", JSON.stringify(user), { expires: 7 });
+      Cookies.set("token", accessToken, { expires: 7, path: "/" }); // Expires in 7 days
+      Cookies.set("user", JSON.stringify(user), { expires: 7, path: "/" });
 
       setState({
         user,
@@ -81,8 +78,28 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         isLoading: false,
       });
 
-      // Redirect based on role
-      const redirectPath = user.role === UserRole.USER ? "/" : "/admin";
+      // Redirect based on role and userType
+      const userType = user.userType || (user as any)?.usetType;
+      let redirectPath = "/";
+
+      if (user.role === UserRole.SUPER_ADMIN && userType === UserType.OWNER) {
+        redirectPath = "/admin";
+      } else if (
+        user.role === UserRole.ADMIN &&
+        userType === UserType.COLLECTOR
+      ) {
+        redirectPath = "/admin";
+      } else if (
+        user.role === UserRole.USER &&
+        userType === UserType.COLLECTOR
+      ) {
+        redirectPath = "/admin";
+      } else if (user.role === UserRole.USER && userType === UserType.VISITOR) {
+        redirectPath = "/";
+      } else {
+        redirectPath = "/";
+      }
+
       router.push(redirectPath);
 
       toast.success("Login successful");
@@ -101,8 +118,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       const { accessToken, user } = response.data;
 
       // Set cookies
-      Cookies.set("token", accessToken, { expires: 7 }); // Expires in 7 days
-      Cookies.set("user", JSON.stringify(user), { expires: 7 });
+      Cookies.set("token", accessToken, { expires: 7, path: "/" }); // Expires in 7 days
+      Cookies.set("user", JSON.stringify(user), { expires: 7, path: "/" });
 
       setState({
         user,
@@ -124,8 +141,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const logout = () => {
-    Cookies.remove("token");
-    Cookies.remove("user");
+    Cookies.remove("token", { path: "/" });
+    Cookies.remove("user", { path: "/" });
     setState({
       user: null,
       token: null,
