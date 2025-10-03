@@ -89,6 +89,21 @@ export const getSidebarItems = (
         },
       ],
     });
+
+    baseItems.push({
+      name: "Silver Jubilee",
+      icon: "🎊",
+      children: [
+        {
+          name: "Submit Response",
+          href: "/admin/silver-jubilee/submit",
+        },
+        {
+          name: "Participants List",
+          href: "/admin/silver-jubilee/participants",
+        },
+      ],
+    });
   }
 
   return baseItems;
