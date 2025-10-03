@@ -14,6 +14,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { MdKeyboardArrowLeft } from "react-icons/md";
 import { MdKeyboardArrowRight } from "react-icons/md";
 import { MdKeyboardArrowDown } from "react-icons/md";
+import { HiX } from "react-icons/hi";
 import logo from "@/public/nicaa-logo-white-bg.png";
 import Image from "next/image";
 import { useState } from "react";
@@ -21,9 +22,16 @@ import { useState } from "react";
 interface SidebarProps {
   isCollapsed: boolean;
   setIsCollapsed: React.Dispatch<React.SetStateAction<boolean>>;
+  isMobile?: boolean;
+  onClose?: () => void;
 }
 
-const Sidebar = ({ isCollapsed, setIsCollapsed }: SidebarProps) => {
+const Sidebar = ({
+  isCollapsed,
+  setIsCollapsed,
+  isMobile = false,
+  onClose,
+}: SidebarProps) => {
   const pathname = usePathname();
   const router = useRouter();
   const { logout } = useAuth();
@@ -62,7 +70,11 @@ const Sidebar = ({ isCollapsed, setIsCollapsed }: SidebarProps) => {
             className={`w-full p-3 cursor-pointer flex items-center justify-between rounded-md ${
               isActive
                 ? "bg-[#EBF5FF] text-[#173F66] font-semibold"
-                : "hover:bg-[#EBF5FF]/20 text-white"
+                : `hover:bg-[#EBF5FF]/20 ${
+                    isMobile
+                      ? "text-gray-800 hover:text-gray-900"
+                      : "text-white"
+                  }`
             } ${isCollapsed ? "justify-center" : ""}`}
             {...(isCollapsed ? { title: item.name } : {})}
           >
@@ -96,7 +108,11 @@ const Sidebar = ({ isCollapsed, setIsCollapsed }: SidebarProps) => {
                   className={`p-2 cursor-pointer flex items-center rounded-md ${
                     pathname === child.href
                       ? "bg-[#EBF5FF] text-[#173F66] font-semibold"
-                      : "hover:bg-[#EBF5FF]/20 text-white"
+                      : `hover:bg-[#EBF5FF]/20 ${
+                          isMobile
+                            ? "text-gray-800 hover:text-gray-900"
+                            : "text-white"
+                        }`
                   }`}
                 >
                   {child.name}
@@ -115,7 +131,9 @@ const Sidebar = ({ isCollapsed, setIsCollapsed }: SidebarProps) => {
         className={`p-3 cursor-pointer flex items-center rounded-md ${
           isActive
             ? "bg-[#EBF5FF] text-[#173F66] font-semibold"
-            : "hover:bg-[#EBF5FF]/20"
+            : `hover:bg-[#EBF5FF]/20 ${
+                isMobile ? "text-gray-800 hover:text-gray-900" : "text-white"
+              }`
         } ${isCollapsed ? "justify-center" : ""}`}
         {...(isCollapsed ? { title: item.name } : {})}
       >
@@ -135,14 +153,30 @@ const Sidebar = ({ isCollapsed, setIsCollapsed }: SidebarProps) => {
 
   return (
     <aside
-      className={` bg-cover bg-center bg-no-repeat flex flex-col fixed h-screen transition-all duration-300 py-4 ${
-        isCollapsed ? "w-16" : "w-64"
+      className={` bg-cover bg-center bg-no-repeat flex flex-col transition-all duration-300 py-4 ${
+        isMobile
+          ? "relative h-full w-full bg-white shadow-xl"
+          : `fixed h-screen ${isCollapsed ? "w-16" : "w-64"}`
       }`}
-      style={{ backgroundImage: `url(${backgroundImage.src})` }}
+      style={isMobile ? {} : { backgroundImage: `url(${backgroundImage.src})` }}
     >
+      {/* Mobile Close Button */}
+      {isMobile && (
+        <div className="flex justify-end p-4">
+          <button
+            onClick={onClose}
+            className="p-2 rounded-md hover:bg-gray-100 transition-colors"
+          >
+            <HiX className="w-6 h-6 text-gray-700" />
+          </button>
+        </div>
+      )}
+
       <Link href="/admin" className="cursor-pointer">
         <div
-          className={`p-4 flex items-center justify-center gap-x-4 border-b border-gray-200 ${
+          className={`p-4 flex items-center gap-x-4 border-b ${
+            isMobile ? "border-gray-200 justify-start" : "border-gray-200"
+          } ${
             isCollapsed ? "justify-center" : "justify-start"
           } overflow-hidden`}
         >
@@ -166,7 +200,9 @@ const Sidebar = ({ isCollapsed, setIsCollapsed }: SidebarProps) => {
           <AnimatePresence>
             {!isCollapsed && (
               <motion.span
-                className={`text-[2.5rem] text-white font-extrabold tracking-wider`}
+                className={`text-[2.5rem] ${
+                  isMobile ? "text-gray-800" : "text-white"
+                } font-extrabold tracking-wider`}
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -20 }}
@@ -179,19 +215,25 @@ const Sidebar = ({ isCollapsed, setIsCollapsed }: SidebarProps) => {
         </div>
       </Link>
 
-      {/* Toggle Button */}
-      <button
-        onClick={() => setIsCollapsed(!isCollapsed)}
-        className="absolute -right-3 top-24 bg-red-600 text-white p-0.5 rounded-full hover:bg-red-700 transition-colors"
-      >
-        {isCollapsed ? (
-          <MdKeyboardArrowRight size={16} />
-        ) : (
-          <MdKeyboardArrowLeft size={16} />
-        )}
-      </button>
+      {/* Toggle Button - Desktop Only */}
+      {!isMobile && (
+        <button
+          onClick={() => setIsCollapsed(!isCollapsed)}
+          className="absolute -right-3 top-24 bg-red-600 text-white p-0.5 rounded-full hover:bg-red-700 transition-colors"
+        >
+          {isCollapsed ? (
+            <MdKeyboardArrowRight size={16} />
+          ) : (
+            <MdKeyboardArrowLeft size={16} />
+          )}
+        </button>
+      )}
 
-      <nav className="flex-1 text-sm text-white overflow-y-auto custom-scrollbar">
+      <nav
+        className={`flex-1 text-sm overflow-y-auto custom-scrollbar ${
+          isMobile ? "text-gray-800" : "text-white"
+        }`}
+      >
         <ul className="space-y-1 py-4">
           {sidebarItems.map((item) => (
             <li key={item.name} className="mx-2">
@@ -205,7 +247,9 @@ const Sidebar = ({ isCollapsed, setIsCollapsed }: SidebarProps) => {
         {/* View Public Site Button */}
         <button
           onClick={() => router.push("/")}
-          className={`mt-2 flex items-center w-full px-4 py-1 hover:bg-[#EBF5FF]/10 text-white rounded-md transition-colors ${
+          className={`mt-2 flex items-center w-full px-4 py-1 hover:bg-[#EBF5FF]/10 ${
+            isMobile ? "text-gray-800 hover:text-gray-900" : "text-white"
+          } rounded-md transition-colors ${
             isCollapsed ? "justify-center" : ""
           }`}
           {...(isCollapsed ? { title: "View Public Site" } : {})}
@@ -225,7 +269,9 @@ const Sidebar = ({ isCollapsed, setIsCollapsed }: SidebarProps) => {
         {/* Logout Button */}
         <button
           onClick={handleLogout}
-          className={`flex items-center w-full px-4 py-1 hover:bg-[#EBF5FF]/10 text-white rounded-md transition-colors ${
+          className={`flex items-center w-full px-4 py-1 hover:bg-[#EBF5FF]/10 ${
+            isMobile ? "text-gray-800 hover:text-gray-900" : "text-white"
+          } rounded-md transition-colors ${
             isCollapsed ? "justify-center" : ""
           }`}
           {...(isCollapsed ? { title: "Logout" } : {})}
