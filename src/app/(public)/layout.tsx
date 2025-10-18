@@ -28,9 +28,9 @@ export default function PublicLayout({
     }
   }, [isAuthenticated, isLoading, router]);
 
-  if (isLoading) {
-    return <PageLoader />;
-  }
+  // if (isLoading) {
+  //   return <PageLoader />;
+  // }
 
   return (
     <div className="flex flex-col overflow-y-auto min-h-screen">

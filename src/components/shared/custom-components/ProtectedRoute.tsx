@@ -36,9 +36,9 @@ const ProtectedRoute = ({
     }
   }, [isAuthenticated, isLoading, user, allowedRoles, router, fallbackPath]);
 
-  if (isLoading) {
-    return <PageLoader />;
-  }
+  // if (isLoading) {
+  //   return <PageLoader />;
+  // }
 
   if (!isAuthenticated) {
     return null;

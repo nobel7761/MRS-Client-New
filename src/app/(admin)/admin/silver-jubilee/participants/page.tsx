@@ -71,54 +71,6 @@ const SilverJubileeParticipantsPage = () => {
     });
   };
 
-  const getGroupChipStyles = (group: string) => {
-    const baseClasses =
-      "inline-flex items-center px-3 py-1.5 rounded-full text-xs font-semibold shadow-sm transition-all duration-200 hover:shadow-md";
-
-    switch (group) {
-      case "Science":
-        return `${baseClasses} bg-gradient-to-r from-blue-500 to-blue-600 text-white border border-blue-300`;
-      case "Business Studies":
-        return `${baseClasses} bg-gradient-to-r from-green-500 to-green-600 text-white border border-green-300`;
-      case "Humanities":
-        return `${baseClasses} bg-gradient-to-r from-purple-500 to-purple-600 text-white border border-purple-300`;
-      default:
-        return `${baseClasses} bg-gradient-to-r from-gray-400 to-gray-500 text-white border border-gray-300`;
-    }
-  };
-
-  const getGenderChipStyles = (gender: string) => {
-    const baseClasses =
-      "inline-flex items-center px-3 py-1.5 rounded-full text-xs font-semibold shadow-sm transition-all duration-200 hover:shadow-md";
-
-    switch (gender) {
-      case "Male":
-        return `${baseClasses} bg-gradient-to-r from-blue-500 to-blue-600 text-white border border-blue-300`;
-      case "Female":
-        return `${baseClasses} bg-gradient-to-r from-pink-500 to-pink-600 text-white border border-pink-300`;
-      default:
-        return `${baseClasses} bg-gradient-to-r from-gray-400 to-gray-500 text-white border border-gray-300`;
-    }
-  };
-
-  const getPaymentChipStyles = (paymentType: string) => {
-    const baseClasses =
-      "inline-flex items-center px-3 py-1.5 rounded-full text-xs font-semibold shadow-sm transition-all duration-200 hover:shadow-md";
-
-    switch (paymentType) {
-      case "Bkash":
-        return `${baseClasses} bg-gradient-to-r from-pink-500 to-pink-600 text-white border border-pink-300`;
-      case "Nagad":
-        return `${baseClasses} bg-gradient-to-r from-orange-500 to-orange-600 text-white border border-orange-300`;
-      case "Cash":
-        return `${baseClasses} bg-gradient-to-r from-green-500 to-green-600 text-white border border-green-300`;
-      case "Bank Account":
-        return `${baseClasses} bg-gradient-to-r from-indigo-500 to-indigo-600 text-white border border-indigo-300`;
-      default:
-        return `${baseClasses} bg-gradient-to-r from-gray-400 to-gray-500 text-white border border-gray-300`;
-    }
-  };
-
   const columns: MUIDataTableColumnDef[] = [
     {
       name: "participantCategory",
@@ -126,40 +78,28 @@ const SilverJubileeParticipantsPage = () => {
       options: {
         filter: true,
         sort: true,
-        customBodyRender: (value: string) => (
-          <span
-            className={`inline-flex items-center px-3 py-1.5 rounded-full text-xs font-semibold ${
-              value === "Alumni"
-                ? "bg-gradient-to-r from-blue-500 to-blue-600 text-white"
-                : value === "Student"
-                ? "bg-gradient-to-r from-green-500 to-green-600 text-white"
-                : "bg-gradient-to-r from-purple-500 to-purple-600 text-white"
-            }`}
-          >
-            {value}
-          </span>
-        ),
+        customBodyRender: (value: string) => value || "-",
       },
     },
     {
       name: "fullName",
-      label: "Full Name",
+      label: "Name",
       options: {
         filter: true,
         sort: true,
         customBodyRender: (value: string, tableMeta: any) => {
           const rowData = data[tableMeta.rowIndex];
           if (rowData.participantCategory === "Guest") {
-            return (
-              <div>
-                <div className="font-semibold">{rowData.guestName}</div>
-                <div className="text-sm text-gray-500">
-                  Guest of: {rowData.mainParticipantName}
-                </div>
-              </div>
-            );
+            return `${rowData.guestName || "-"} || Guest of: ${
+              rowData.mainParticipantName || "-"
+            }`;
           }
-          return value;
+          if (rowData.participantCategory === "Baby") {
+            return `${rowData.babyName || "-"} || Baby of: ${
+              rowData.mainParticipantName || "-"
+            }`;
+          }
+          return value || "-";
         },
       },
     },
@@ -169,12 +109,16 @@ const SilverJubileeParticipantsPage = () => {
       options: {
         filter: true,
         sort: true,
+        display: false, // Hidden by default
         customBodyRender: (value: string, tableMeta: any) => {
           const rowData = data[tableMeta.rowIndex];
           if (rowData.participantCategory === "Guest") {
-            return rowData.guestMobileNumber || value;
+            return rowData.guestMobileNumber || value || "-";
           }
-          return value;
+          if (rowData.participantCategory === "Baby") {
+            return rowData.babyPhone || value || "-";
+          }
+          return value || "-";
         },
       },
     },
@@ -184,14 +128,17 @@ const SilverJubileeParticipantsPage = () => {
       options: {
         filter: true,
         sort: true,
+        display: false, // Hidden by default
+        customBodyRender: (value: string) => value || "-",
       },
     },
     {
       name: "hscPassingYear",
-      label: "HSC Year",
+      label: "Batch",
       options: {
         filter: true,
         sort: true,
+        customBodyRender: (value: number) => value || "-",
       },
     },
     {
@@ -200,9 +147,16 @@ const SilverJubileeParticipantsPage = () => {
       options: {
         filter: true,
         sort: true,
-        customBodyRender: (value: string) => (
-          <span className={getGroupChipStyles(value)}>{value}</span>
-        ),
+        customBodyRender: (value: string) => value || "-",
+      },
+    },
+    {
+      name: "secretCode",
+      label: "Secret Code",
+      options: {
+        filter: true,
+        sort: true,
+        customBodyRender: (value: string) => value || "-",
       },
     },
     {
@@ -211,9 +165,8 @@ const SilverJubileeParticipantsPage = () => {
       options: {
         filter: true,
         sort: true,
-        customBodyRender: (value: string) => (
-          <span className={getGenderChipStyles(value)}>{value}</span>
-        ),
+        display: false, // Hidden by default
+        customBodyRender: (value: string) => value || "-",
       },
     },
     {
@@ -222,11 +175,8 @@ const SilverJubileeParticipantsPage = () => {
       options: {
         filter: true,
         sort: true,
-        customBodyRender: (value: string) => (
-          <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
-            {value}
-          </span>
-        ),
+        display: false, // Hidden by default
+        customBodyRender: (value: string) => value || "-",
       },
     },
     {
@@ -235,39 +185,39 @@ const SilverJubileeParticipantsPage = () => {
       options: {
         filter: true,
         sort: true,
-        customBodyRender: (value: string) => (
-          <span className={getPaymentChipStyles(value)}>{value}</span>
-        ),
+        display: false, // Hidden by default
+        customBodyRender: (value: string) => value || "-",
       },
     },
-    {
-      name: "amountType",
-      label: "Amount Type",
-      options: {
-        filter: true,
-        sort: true,
-        customBodyRender: (value: string) => (
-          <span
-            className={`inline-flex items-center px-3 py-1.5 rounded-full text-xs font-semibold ${
-              value === "Registration"
-                ? "bg-gradient-to-r from-blue-500 to-blue-600 text-white"
-                : "bg-gradient-to-r from-orange-500 to-orange-600 text-white"
-            }`}
-          >
-            {value}
-          </span>
-        ),
-      },
-    },
+    // {
+    //   name: "amountType",
+    //   label: "Amount Type",
+    //   options: {
+    //     filter: true,
+    //     sort: true,
+    //     customBodyRender: (value: string) => (
+    //       <span
+    //         className={`inline-flex items-center px-3 py-1.5 rounded-full text-xs font-semibold ${
+    //           value === "Registration"
+    //             ? "bg-gradient-to-r from-blue-500 to-blue-600 text-white"
+    //             : "bg-gradient-to-r from-orange-500 to-orange-600 text-white"
+    //         }`}
+    //       >
+    //         {value}
+    //       </span>
+    //     ),
+    //   },
+    // },
     {
       name: "amount",
       label: "Amount",
       options: {
         filter: true,
         sort: true,
-        customBodyRender: (value: number) => (
-          <span className="font-semibold text-green-600">৳{value}</span>
-        ),
+        customBodyRender: (value: number) => {
+          if (!value && value !== 0) return "-";
+          return `৳${value}`;
+        },
       },
     },
     {
@@ -277,6 +227,27 @@ const SilverJubileeParticipantsPage = () => {
         filter: true,
         sort: true,
         display: false, // Hidden by default
+        customBodyRender: (value: string) => value || "-",
+      },
+    },
+    {
+      name: "fatherOccupation",
+      label: "Father's Occupation",
+      options: {
+        filter: true,
+        sort: true,
+        display: false, // Hidden by default
+        customBodyRender: (value: string) => value || "-",
+      },
+    },
+    {
+      name: "fatherPhoneNumber",
+      label: "Father's Phone",
+      options: {
+        filter: true,
+        sort: true,
+        display: false, // Hidden by default
+        customBodyRender: (value: string) => value || "-",
       },
     },
     {
@@ -286,6 +257,27 @@ const SilverJubileeParticipantsPage = () => {
         filter: true,
         sort: true,
         display: false, // Hidden by default
+        customBodyRender: (value: string) => value || "-",
+      },
+    },
+    {
+      name: "motherOccupation",
+      label: "Mother's Occupation",
+      options: {
+        filter: true,
+        sort: true,
+        display: false, // Hidden by default
+        customBodyRender: (value: string) => value || "-",
+      },
+    },
+    {
+      name: "motherPhoneNumber",
+      label: "Mother's Phone",
+      options: {
+        filter: true,
+        sort: true,
+        display: false, // Hidden by default
+        customBodyRender: (value: string) => value || "-",
       },
     },
     {
@@ -295,7 +287,7 @@ const SilverJubileeParticipantsPage = () => {
         filter: true,
         sort: true,
         display: false, // Hidden by default
-        customBodyRender: (value: string) => value || "No comments",
+        customBodyRender: (value: string) => value || "-",
       },
     },
     {
@@ -304,8 +296,8 @@ const SilverJubileeParticipantsPage = () => {
       options: {
         filter: true,
         sort: true,
-        display: false, // Hidden by default
-        customBodyRender: (value: string) => formatDate(value),
+        display: true,
+        customBodyRender: (value: string) => (value ? formatDate(value) : "-"),
       },
     },
   ];
@@ -337,26 +329,7 @@ const SilverJubileeParticipantsPage = () => {
                 data={data}
                 columns={columns}
                 options={getMuiDatatableOptions(
-                  "silver-jubilee-participants.csv",
-                  {
-                    customToolbar: () => (
-                      <>
-                        <Link href={"/admin/silver-jubilee/submit"}>
-                          <Button
-                            component="a"
-                            variant="outlined"
-                            color="primary"
-                            size="small"
-                            sx={{
-                              ml: 1,
-                            }}
-                          >
-                            Add Participant
-                          </Button>
-                        </Link>
-                      </>
-                    ),
-                  }
+                  "silver-jubilee-participants.csv"
                 )}
               />
             )}

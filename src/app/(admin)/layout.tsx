@@ -40,9 +40,9 @@ export default function AdminLayout({
     }
   }, [isAuthenticated, isLoading, user, router]);
 
-  if (isLoading) {
-    return <PageLoader />;
-  }
+  // if (isLoading) {
+  //   return <PageLoader />;
+  // }
 
   if (!isAuthenticated) {
     return null;

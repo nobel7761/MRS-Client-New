@@ -32,10 +32,18 @@ export enum SilverJubileeParticipantCategory {
   ALUMNI = "Alumni",
   STUDENT = "Student",
   GUEST = "Guest",
+  BABY = "Baby",
+  LIFETIMEMEMBERSHIP = "Lifetime Membership",
 }
 
 export enum SilverJubileeAmountType {
   REGISTRATION = "Registration",
+  DONATION = "Donation",
+}
+
+export enum SilverJubileeGuestAmountType {
+  FIXED_1000 = "1000",
+  OTHER_AMOUNT = "Other Amount",
   DONATION = "Donation",
 }
 
@@ -54,7 +62,6 @@ export interface SilverJubileeParticipant {
   gender: SilverJubileeGender;
   bloodGroup: SilverJubileeBloodGroup;
   paymentType: SilverJubileePaymentType;
-  amountType: SilverJubileeAmountType;
   amount: number;
   comments?: string;
 
@@ -69,9 +76,18 @@ export interface SilverJubileeParticipant {
   // Guest Information (only for guests)
   mainParticipantBatch?: number;
   mainParticipantGroup?: SilverJubileeGroup;
+  mainParticipantId?: string;
   mainParticipantName?: string;
   guestName?: string;
+  relation?: string;
   guestMobileNumber?: string;
+
+  // Baby Information (only for babies)
+  babyName?: string;
+  babyPhone?: string;
+
+  // Secret Code for identification
+  secretCode?: string;
 
   // Metadata
   createdAt?: string;
@@ -92,7 +108,6 @@ export interface SilverJubileeFormData {
   gender: SilverJubileeGender;
   bloodGroup: SilverJubileeBloodGroup;
   paymentType: SilverJubileePaymentType;
-  amountType: SilverJubileeAmountType;
   amount: number;
   comments: string;
 
@@ -107,7 +122,38 @@ export interface SilverJubileeFormData {
   // Guest Information (only for guests)
   mainParticipantBatch: number;
   mainParticipantGroup: SilverJubileeGroup;
+  mainParticipantId: string;
   mainParticipantName: string;
   guestName: string;
   guestMobileNumber: string;
+  guestAmountType: SilverJubileeGuestAmountType;
+  guestAmount: number;
+
+  // Baby Information (only for babies)
+  babyAge: number;
+}
+
+export interface SilverJubileeGuestSubmissionData {
+  participantCategory: SilverJubileeParticipantCategory;
+  mainParticipantBatch: number;
+  mainParticipantGroup: SilverJubileeGroup;
+  mainParticipantId: string;
+  guestName: string;
+  relation: string; // Relation to main participant (required for Guest)
+  guestMobileNumber: string;
+  amount: number;
+  paymentType: string;
+  comments?: string;
+}
+
+export interface SilverJubileeBabySubmissionData {
+  participantCategory: SilverJubileeParticipantCategory;
+  mainParticipantBatch: number;
+  mainParticipantGroup: SilverJubileeGroup;
+  mainParticipantId: string;
+  babyName: string;
+  babyPhone: string;
+  amount: number;
+  paymentType: string;
+  comments?: string;
 }

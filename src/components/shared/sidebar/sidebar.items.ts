@@ -39,6 +39,25 @@ export const getSidebarItems = (
       icon: "👤",
       href: "/admin/users/registered",
     });
+
+    // Add Silver Jubilee for User + COLLECTOR
+    if (userRole === UserRole.USER) {
+      baseItems.push({
+        name: "Silver Jubilee",
+        icon: "🎊",
+        children: [
+          {
+            name: "Submit Response",
+            href: "/admin/silver-jubilee/submit",
+          },
+          {
+            name: "Participants List",
+            href: "/admin/silver-jubilee/participants",
+          },
+        ],
+      });
+    }
+
     return baseItems;
   }
 
@@ -90,6 +109,28 @@ export const getSidebarItems = (
       ],
     });
 
+    baseItems.push({
+      name: "Silver Jubilee",
+      icon: "🎊",
+      children: [
+        {
+          name: "Submit Response",
+          href: "/admin/silver-jubilee/submit",
+        },
+        {
+          name: "Participants List",
+          href: "/admin/silver-jubilee/participants",
+        },
+      ],
+    });
+  }
+
+  // SuperAdmin (any userType): Also gets Silver Jubilee if not already added
+  if (
+    userRole === UserRole.SUPER_ADMIN &&
+    userType !== UserType.OWNER &&
+    userType !== "OWNER"
+  ) {
     baseItems.push({
       name: "Silver Jubilee",
       icon: "🎊",
