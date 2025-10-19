@@ -40,8 +40,8 @@ export const getSidebarItems = (
       href: "/admin/users",
     });
 
-    // Add Silver Jubilee for User + COLLECTOR
-    if (userRole === UserRole.USER) {
+    // Add Silver Jubilee for (User or Admin) + COLLECTOR
+    if (userRole === UserRole.USER || userRole === UserRole.ADMIN) {
       baseItems.push({
         name: "Silver Jubilee",
         icon: "🎊",

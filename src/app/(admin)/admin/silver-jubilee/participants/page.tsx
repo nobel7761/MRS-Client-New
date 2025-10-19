@@ -78,10 +78,7 @@ const SilverJubileeParticipantsPage = () => {
       const loadingToast = toast.loading("Sending email...");
 
       // Call the backend API to send email
-      await directApi.post(
-        `/silver-jubilee/participants/${participant._id}/send-email`,
-        {}
-      );
+      await directApi.post(`/silver-jubilee/${participant._id}/send-email`, {});
 
       // Update the toast to success
       toast.update(loadingToast, {
