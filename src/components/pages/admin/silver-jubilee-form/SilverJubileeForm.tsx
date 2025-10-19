@@ -153,6 +153,7 @@ const SilverJubileeForm = () => {
     { id: string; name: string; phoneNumber: string }[]
   >([]);
   const [isLoadingParticipants, setIsLoadingParticipants] = useState(false);
+  const [noParticipantsFound, setNoParticipantsFound] = useState(false);
 
   const {
     register,
@@ -257,6 +258,7 @@ const SilverJubileeForm = () => {
     const fetchMainParticipants = async () => {
       if (guestBatch && guestGroup) {
         setIsLoadingParticipants(true);
+        setNoParticipantsFound(false);
         try {
           const response =
             await silverJubileeApi.getParticipantsByBatchAndGroup(
@@ -275,12 +277,33 @@ const SilverJubileeForm = () => {
 
           setMainParticipantsList(transformedParticipants);
 
+          // Check if no participants were found
+          if (transformedParticipants.length === 0) {
+            setNoParticipantsFound(true);
+          }
+
           // Reset main participant selection when batch/group changes
           setValue("mainParticipant", null);
-        } catch (error) {
+        } catch (error: any) {
           console.error("Error fetching participants:", error);
-          toast.error("Failed to fetch participants. Please try again.");
-          setMainParticipantsList([]);
+
+          // Check if it's a "not found" or "no records" error (404 or empty result)
+          // In these cases, show the "no participants found" message instead of error toast
+          const isNoRecordsError =
+            error?.response?.status === 404 ||
+            error?.response?.data?.participants?.length === 0 ||
+            error?.message?.toLowerCase().includes("not found") ||
+            error?.message?.toLowerCase().includes("no participants");
+
+          if (isNoRecordsError) {
+            setMainParticipantsList([]);
+            setNoParticipantsFound(true);
+          } else {
+            // Only show toast for actual errors (network issues, server errors, etc.)
+            toast.error("Failed to fetch participants. Please try again.");
+            setMainParticipantsList([]);
+            setNoParticipantsFound(false);
+          }
         } finally {
           setIsLoadingParticipants(false);
         }
@@ -288,6 +311,7 @@ const SilverJubileeForm = () => {
         // Clear the list if batch or group is not selected
         setMainParticipantsList([]);
         setValue("mainParticipant", null);
+        setNoParticipantsFound(false);
       }
     };
 
@@ -786,142 +810,154 @@ const SilverJubileeForm = () => {
               {/* Main Participant - Show after batch and group are selected */}
               {guestBatch && guestGroup && (
                 <>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Main Participant <span className="text-red-500">*</span>
-                    </label>
-                    <Controller
-                      name="mainParticipant"
-                      control={control}
-                      rules={{
-                        required: isGuestOrBaby
-                          ? "Main participant is required"
-                          : false,
-                      }}
-                      render={({ field }) => (
-                        <Listbox
-                          value={field.value}
-                          onChange={field.onChange}
-                          disabled={
-                            !guestBatch || !guestGroup || isLoadingParticipants
-                          }
-                        >
-                          <div className="relative">
-                            <Listbox.Button
-                              className={`relative w-full cursor-pointer rounded-lg bg-white py-3 pl-4 pr-10 text-left border focus:outline-none focus:ring-2 focus:border-transparent ${
-                                errors.mainParticipant
-                                  ? "border-red-500 focus:ring-red-500"
-                                  : "border-gray-300 focus:ring-blue-500"
-                              } ${
-                                !guestBatch ||
-                                !guestGroup ||
-                                isLoadingParticipants
-                                  ? "opacity-60 cursor-not-allowed"
-                                  : ""
-                              }`}
-                            >
-                              <span
-                                className={`block truncate ${
-                                  field.value
-                                    ? "text-gray-900"
-                                    : "text-gray-400"
+                  {/* Main Participant Selection or No Records Message */}
+                  {noParticipantsFound ? (
+                    <div className="text-center py-8">
+                      <p className="text-red-600 font-bold text-lg">
+                        No participants found for the selected batch and group.
+                        Please try a different combination.
+                      </p>
+                    </div>
+                  ) : (
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Main Participant <span className="text-red-500">*</span>
+                      </label>
+                      <Controller
+                        name="mainParticipant"
+                        control={control}
+                        rules={{
+                          required: isGuestOrBaby
+                            ? "Main participant is required"
+                            : false,
+                        }}
+                        render={({ field }) => (
+                          <Listbox
+                            value={field.value}
+                            onChange={field.onChange}
+                            disabled={
+                              !guestBatch ||
+                              !guestGroup ||
+                              isLoadingParticipants
+                            }
+                          >
+                            <div className="relative">
+                              <Listbox.Button
+                                className={`relative w-full cursor-pointer rounded-lg bg-white py-3 pl-4 pr-10 text-left border focus:outline-none focus:ring-2 focus:border-transparent ${
+                                  errors.mainParticipant
+                                    ? "border-red-500 focus:ring-red-500"
+                                    : "border-gray-300 focus:ring-blue-500"
+                                } ${
+                                  !guestBatch ||
+                                  !guestGroup ||
+                                  isLoadingParticipants
+                                    ? "opacity-60 cursor-not-allowed"
+                                    : ""
                                 }`}
                               >
-                                {isLoadingParticipants
-                                  ? "Loading participants..."
-                                  : !guestBatch || !guestGroup
-                                  ? "Please select batch and group first"
-                                  : field.value
-                                  ? field.value.name
-                                  : "Select main participant"}
-                              </span>
-                              <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400">
-                                {isLoadingParticipants ? (
-                                  <svg
-                                    className="animate-spin h-5 w-5 text-gray-400"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                  >
-                                    <circle
-                                      className="opacity-25"
-                                      cx="12"
-                                      cy="12"
-                                      r="10"
-                                      stroke="currentColor"
-                                      strokeWidth="4"
-                                    ></circle>
-                                    <path
-                                      className="opacity-75"
-                                      fill="currentColor"
-                                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                                    ></path>
-                                  </svg>
-                                ) : (
-                                  <ChevronUpDownIcon />
-                                )}
-                              </span>
-                            </Listbox.Button>
-                            <Transition
-                              leave="transition ease-in duration-100"
-                              leaveFrom="opacity-100"
-                              leaveTo="opacity-0"
-                            >
-                              <Listbox.Options className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-                                {mainParticipantsList.length === 0 ? (
-                                  <div className="py-3 px-4 text-gray-500 text-center">
-                                    No participants found for this batch and
-                                    group
-                                  </div>
-                                ) : (
-                                  mainParticipantsList.map((participant) => (
-                                    <Listbox.Option
-                                      key={participant.id}
-                                      className={({ active }) =>
-                                        `relative cursor-pointer select-none py-3 pl-10 pr-4 ${
-                                          active
-                                            ? "bg-blue-100 text-blue-900"
-                                            : "text-gray-900"
-                                        }`
-                                      }
-                                      value={participant}
+                                <span
+                                  className={`block truncate ${
+                                    field.value
+                                      ? "text-gray-900"
+                                      : "text-gray-400"
+                                  }`}
+                                >
+                                  {isLoadingParticipants
+                                    ? "Loading participants..."
+                                    : !guestBatch || !guestGroup
+                                    ? "Please select batch and group first"
+                                    : field.value
+                                    ? field.value.name
+                                    : "Select main participant"}
+                                </span>
+                                <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400">
+                                  {isLoadingParticipants ? (
+                                    <svg
+                                      className="animate-spin h-5 w-5 text-gray-400"
+                                      xmlns="http://www.w3.org/2000/svg"
+                                      fill="none"
+                                      viewBox="0 0 24 24"
                                     >
-                                      {({ selected }) => (
-                                        <>
-                                          <span
-                                            className={`block truncate ${
-                                              selected
-                                                ? "font-semibold"
-                                                : "font-normal"
-                                            }`}
-                                          >
-                                            {participant.name}
-                                          </span>
-                                          <div className="text-xs text-gray-500 mt-1">
-                                            {participant.phoneNumber}
-                                          </div>
-                                          {selected ? (
-                                            <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-blue-600">
-                                              <CheckIcon />
+                                      <circle
+                                        className="opacity-25"
+                                        cx="12"
+                                        cy="12"
+                                        r="10"
+                                        stroke="currentColor"
+                                        strokeWidth="4"
+                                      ></circle>
+                                      <path
+                                        className="opacity-75"
+                                        fill="currentColor"
+                                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                                      ></path>
+                                    </svg>
+                                  ) : (
+                                    <ChevronUpDownIcon />
+                                  )}
+                                </span>
+                              </Listbox.Button>
+                              <Transition
+                                leave="transition ease-in duration-100"
+                                leaveFrom="opacity-100"
+                                leaveTo="opacity-0"
+                              >
+                                <Listbox.Options className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                                  {mainParticipantsList.length === 0 ? (
+                                    <div className="py-3 px-4 text-gray-500 text-center">
+                                      No participants found for this batch and
+                                      group
+                                    </div>
+                                  ) : (
+                                    mainParticipantsList.map((participant) => (
+                                      <Listbox.Option
+                                        key={participant.id}
+                                        className={({ active }) =>
+                                          `relative cursor-pointer select-none py-3 pl-10 pr-4 ${
+                                            active
+                                              ? "bg-blue-100 text-blue-900"
+                                              : "text-gray-900"
+                                          }`
+                                        }
+                                        value={participant}
+                                      >
+                                        {({ selected }) => (
+                                          <>
+                                            <span
+                                              className={`block truncate ${
+                                                selected
+                                                  ? "font-semibold"
+                                                  : "font-normal"
+                                              }`}
+                                            >
+                                              {participant.name}
                                             </span>
-                                          ) : null}
-                                        </>
-                                      )}
-                                    </Listbox.Option>
-                                  ))
-                                )}
-                              </Listbox.Options>
-                            </Transition>
-                          </div>
-                        </Listbox>
+                                            <div className="text-xs text-gray-500 mt-1">
+                                              {participant.phoneNumber}
+                                            </div>
+                                            {selected ? (
+                                              <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-blue-600">
+                                                <CheckIcon />
+                                              </span>
+                                            ) : null}
+                                          </>
+                                        )}
+                                      </Listbox.Option>
+                                    ))
+                                  )}
+                                </Listbox.Options>
+                              </Transition>
+                            </div>
+                          </Listbox>
+                        )}
+                      />
+                      {errors.mainParticipant && (
+                        <p className="mt-1 text-sm text-red-600">
+                          {errors.mainParticipant.message}
+                        </p>
                       )}
-                    />
-                    {errors.mainParticipant && (
-                      <p className="mt-1 text-sm text-red-600">
-                        {errors.mainParticipant.message}
-                      </p>
-                    )}
-                  </div>
+                    </div>
+                  )}
 
                   {/* Guest/Baby Details - Show after main participant is selected */}
                   {mainParticipant && (

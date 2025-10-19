@@ -12,6 +12,9 @@ import Link from "next/link";
 import Button from "@mui/material/Button";
 import AnimatedButton from "@/components/shared/custom-components/animated-button";
 import StatusChip from "@/components/shared/custom-components/StatusChip";
+import { useAuth } from "@/contexts/AuthContext";
+import { UserRole, UserType } from "@/types/auth";
+import { directApi } from "@/lib/directApi";
 
 const MUIDataTable = MUIDataTableImport as unknown as React.ComponentType<any>;
 
@@ -46,6 +49,12 @@ function getMuiDatatableOptions(
 const SilverJubileeParticipantsPage = () => {
   const [data, setData] = useState<SilverJubileeParticipant[]>([]);
   const [loading, setLoading] = useState(true);
+  const { user } = useAuth();
+
+  // Check if user can view secret code
+  const canViewSecretCode =
+    user?.role === UserRole.SUPER_ADMIN ||
+    (user?.role === UserRole.ADMIN && user?.userType === UserType.COLLECTOR);
 
   const fetchData = async () => {
     try {
@@ -62,6 +71,33 @@ const SilverJubileeParticipantsPage = () => {
   useEffect(() => {
     fetchData();
   }, []);
+
+  const handleSendEmail = async (participant: SilverJubileeParticipant) => {
+    try {
+      // Show loading toast
+      const loadingToast = toast.loading("Sending email...");
+
+      // Call the backend API to send email
+      await directApi.post(
+        `/silver-jubilee/participants/${participant._id}/send-email`,
+        {}
+      );
+
+      // Update the toast to success
+      toast.update(loadingToast, {
+        render: "Email sent successfully!",
+        type: "success",
+        isLoading: false,
+        autoClose: 3000,
+      });
+
+      // Refresh the data to update the email status
+      fetchData();
+    } catch (error) {
+      console.error("Error sending email:", error);
+      toast.error("Failed to send email. Please try again.");
+    }
+  };
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("en-US", {
@@ -150,12 +186,13 @@ const SilverJubileeParticipantsPage = () => {
         customBodyRender: (value: string) => value || "-",
       },
     },
-    {
+    canViewSecretCode && {
       name: "secretCode",
       label: "Secret Code",
       options: {
         filter: true,
         sort: true,
+        display: false, // Only visible for SUPER_ADMIN or ADMIN with COLLECTOR userType
         customBodyRender: (value: string) => value || "-",
       },
     },
@@ -300,7 +337,56 @@ const SilverJubileeParticipantsPage = () => {
         customBodyRender: (value: string) => (value ? formatDate(value) : "-"),
       },
     },
-  ];
+    {
+      name: "registeredBy",
+      label: "Registered By",
+      options: {
+        filter: true,
+        sort: true,
+        display: false,
+        customBodyRender: (value: any) => {
+          if (!value) return "-";
+          return (
+            `${value.firstName || ""} ${value.lastName || ""}`.trim() || "-"
+          );
+        },
+      },
+    },
+    {
+      name: "isEmailSent",
+      label: "Email Status",
+      options: {
+        filter: true,
+        sort: false,
+        display: true,
+        customBodyRender: (value: boolean, tableMeta: any) => {
+          const rowData = data[tableMeta.rowIndex];
+          if (value === false) {
+            return (
+              <Button
+                variant="contained"
+                color="primary"
+                size="small"
+                onClick={() => handleSendEmail(rowData)}
+                sx={{
+                  textTransform: "none",
+                  fontSize: "0.875rem",
+                  padding: "6px 16px",
+                }}
+              >
+                Send Email
+              </Button>
+            );
+          }
+          return (
+            <span className="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-semibold bg-green-100 text-green-800">
+              Sent
+            </span>
+          );
+        },
+      },
+    },
+  ].filter(Boolean) as MUIDataTableColumnDef[];
 
   if (loading) {
     return (

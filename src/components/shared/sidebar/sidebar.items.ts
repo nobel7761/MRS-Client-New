@@ -37,7 +37,7 @@ export const getSidebarItems = (
     baseItems.push({
       name: "Users",
       icon: "👤",
-      href: "/admin/users/registered",
+      href: "/admin/users",
     });
 
     // Add Silver Jubilee for User + COLLECTOR
@@ -84,7 +84,7 @@ export const getSidebarItems = (
     baseItems.push({
       name: "Users",
       icon: "👤",
-      href: "/admin/users/registered",
+      href: "/admin/users",
     });
 
     baseItems.push({
