@@ -19,8 +19,8 @@ const UserDropdown = () => {
   const isAdmin =
     user?.role === UserRole.ADMIN || user?.role === UserRole.SUPER_ADMIN;
 
-  // Handle both userType and usetType (typo in backend data)
-  const userType = user?.userType || (user as any)?.usetType;
+  // Handle both userType and userType (typo in backend data)
+  const userType = user?.userType || (user as any)?.userType;
   const isCollector = userType === UserType.COLLECTOR;
 
   // Calculate dropdown position

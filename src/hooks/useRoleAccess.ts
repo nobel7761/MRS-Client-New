@@ -18,12 +18,12 @@ export const useRoleAccess = () => {
   };
 
   const isCollector = (): boolean => {
-    const userType = user?.userType || (user as any)?.usetType;
+    const userType = user?.userType || (user as any)?.userType;
     return userType === UserType.COLLECTOR || userType === "COLLECTOR";
   };
 
   const hasAdminAccess = (): boolean => {
-    const userType = user?.userType || (user as any)?.usetType;
+    const userType = user?.userType || (user as any)?.userType;
     return (
       (user?.role === UserRole.SUPER_ADMIN && userType === UserType.OWNER) ||
       (user?.role === UserRole.ADMIN && userType === UserType.COLLECTOR) ||
@@ -48,6 +48,6 @@ export const useRoleAccess = () => {
     hasAdminAccess,
     canAccessFaqs,
     userRole: user?.role,
-    userType: user?.userType || (user as any)?.usetType,
+    userType: user?.userType || (user as any)?.userType,
   };
 };

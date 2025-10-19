@@ -25,8 +25,8 @@ export default function AdminLayout({
         router.push("/");
       } else {
         // Check if user has proper role and userType combination for admin access
-        // Handle both userType and usetType (typo in backend data)
-        const userType = user?.userType || (user as any)?.usetType;
+        // Handle both userType and userType (typo in backend data)
+        const userType = user?.userType || (user as any)?.userType;
         const hasValidAccess =
           (user?.role === UserRole.SUPER_ADMIN &&
             userType === UserType.OWNER) ||
@@ -49,8 +49,8 @@ export default function AdminLayout({
   }
 
   // Check if user has proper role and userType combination for admin access
-  // Handle both userType and usetType (typo in backend data)
-  const userType = user?.userType || (user as any)?.usetType;
+  // Handle both userType and userType (typo in backend data)
+  const userType = user?.userType || (user as any)?.userType;
   const hasValidAccess =
     (user?.role === UserRole.SUPER_ADMIN && userType === UserType.OWNER) ||
     (user?.role === UserRole.ADMIN && userType === UserType.COLLECTOR) ||

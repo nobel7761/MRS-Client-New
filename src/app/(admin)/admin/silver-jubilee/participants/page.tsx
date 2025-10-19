@@ -56,6 +56,10 @@ const SilverJubileeParticipantsPage = () => {
     user?.role === UserRole.SUPER_ADMIN ||
     (user?.role === UserRole.ADMIN && user?.userType === UserType.COLLECTOR);
 
+  // Check if user can view email status column
+  const canViewEmailStatus =
+    user?.role === UserRole.SUPER_ADMIN ||
+    (user?.role === UserRole.ADMIN && user?.userType === UserType.COLLECTOR);
   const fetchData = async () => {
     try {
       const response = await silverJubileeApi.getAllParticipants();
@@ -349,7 +353,7 @@ const SilverJubileeParticipantsPage = () => {
         },
       },
     },
-    {
+    canViewEmailStatus && {
       name: "isEmailSent",
       label: "Email Status",
       options: {

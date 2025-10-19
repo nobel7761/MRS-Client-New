@@ -54,15 +54,15 @@ export function middleware(request: NextRequest) {
 
   // Admin routes protection
   if (pathname.startsWith("/admin")) {
-    // Handle both userType and usetType (typo in backend data)
-    const userType = parsedUser.userType || parsedUser.usetType;
+    // Get userType from parsed user and normalize to uppercase for comparison
+    const userType = parsedUser.userType?.toString().toUpperCase();
+    const userRole = parsedUser.role?.toString().toUpperCase();
 
     // Check if user has proper role and userType combination
     const hasValidAccess =
-      (parsedUser.role === UserRole.SUPER_ADMIN &&
-        userType === UserType.OWNER) ||
-      (parsedUser.role === UserRole.ADMIN && userType === UserType.COLLECTOR) ||
-      (parsedUser.role === UserRole.USER && userType === UserType.COLLECTOR);
+      (userRole === UserRole.SUPER_ADMIN && userType === UserType.OWNER) ||
+      (userRole === UserRole.ADMIN && userType === UserType.COLLECTOR) ||
+      (userRole === UserRole.USER && userType === UserType.COLLECTOR);
 
     if (!hasValidAccess) {
       return NextResponse.redirect(new URL("/", request.url));
@@ -70,30 +70,21 @@ export function middleware(request: NextRequest) {
 
     // FAQs routes protection - only SUPER_ADMIN + OWNER can access
     if (pathname.startsWith("/admin/faqs")) {
-      if (
-        parsedUser.role !== UserRole.SUPER_ADMIN ||
-        userType !== UserType.OWNER
-      ) {
+      if (userRole !== UserRole.SUPER_ADMIN || userType !== UserType.OWNER) {
         return NextResponse.redirect(new URL("/admin", request.url));
       }
     }
 
     // Events routes protection - only SUPER_ADMIN + OWNER can access
     if (pathname.startsWith("/admin/events")) {
-      if (
-        parsedUser.role !== UserRole.SUPER_ADMIN ||
-        userType !== UserType.OWNER
-      ) {
+      if (userRole !== UserRole.SUPER_ADMIN || userType !== UserType.OWNER) {
         return NextResponse.redirect(new URL("/admin", request.url));
       }
     }
 
     // Email Management routes protection - only SUPER_ADMIN + OWNER can access
     if (pathname.startsWith("/admin/email")) {
-      if (
-        parsedUser.role !== UserRole.SUPER_ADMIN ||
-        userType !== UserType.OWNER
-      ) {
+      if (userRole !== UserRole.SUPER_ADMIN || userType !== UserType.OWNER) {
         return NextResponse.redirect(new URL("/admin", request.url));
       }
     }

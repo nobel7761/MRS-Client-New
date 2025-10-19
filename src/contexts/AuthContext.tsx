@@ -79,7 +79,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       });
 
       // Redirect based on role and userType
-      const userType = user.userType || (user as any)?.usetType;
+      const userType = user.userType || (user as any)?.userType;
       let redirectPath = "/";
 
       if (user.role === UserRole.SUPER_ADMIN && userType === UserType.OWNER) {
