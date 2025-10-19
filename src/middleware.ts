@@ -16,6 +16,7 @@ export function middleware(request: NextRequest) {
     "/",
     "/login",
     "/register",
+    "/reset-password",
     "/faqs",
     "/about",
     "/contact",

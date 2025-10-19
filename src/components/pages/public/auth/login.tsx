@@ -9,10 +9,16 @@ import logo from "@/public/nicaa-logo-white-bg.png";
 import backgroundImage from "@/public/background.jpg";
 import Image from "next/image";
 import RegistrationComponent from "./registration";
+import { toast } from "react-toastify";
+import { forgotPassword } from "@/lib/authApi";
 
 interface LoginFormData {
   identifier: string;
   password: string;
+}
+
+interface ForgotPasswordFormData {
+  identifier: string;
 }
 
 const schema = yup.object().shape({
@@ -20,10 +26,15 @@ const schema = yup.object().shape({
   password: yup.string().required("Password is required"),
 });
 
+const forgotPasswordSchema = yup.object().shape({
+  identifier: yup.string().required("Email or phone number is required"),
+});
+
 const LoginComponent = () => {
   const { login } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [showRegistration, setShowRegistration] = useState(false);
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const {
@@ -34,11 +45,37 @@ const LoginComponent = () => {
     resolver: yupResolver(schema),
   });
 
+  const {
+    register: registerForgot,
+    handleSubmit: handleSubmitForgot,
+    formState: { errors: errorsForgot, isSubmitting: isSubmittingForgot },
+    reset: resetForgot,
+  } = useForm<ForgotPasswordFormData>({
+    resolver: yupResolver(forgotPasswordSchema),
+  });
+
   const onSubmit = async (data: LoginFormData) => {
     try {
       await login(data);
     } catch (error) {
       console.error("Login failed:", error);
+    }
+  };
+
+  const onForgotPasswordSubmit = async (data: ForgotPasswordFormData) => {
+    try {
+      const response = await forgotPassword(data.identifier);
+      toast.success(
+        response.message ||
+          "Password reset email sent! Please check your inbox."
+      );
+      setShowForgotPassword(false);
+      resetForgot();
+    } catch (error: any) {
+      const errorMessage =
+        error.response?.data?.message ||
+        "Failed to send reset email. Please try again.";
+      toast.error(errorMessage);
     }
   };
 
@@ -155,12 +192,13 @@ const LoginComponent = () => {
                         <label className="text-white text-sm md:text-base">
                           Password
                         </label>
-                        {/* <Link
-                              href="/forgot-password"
-                              className="text-white hover:text-primary/80"
-                            >
-                              Forgot Password?
-                            </Link> */}
+                        <button
+                          type="button"
+                          onClick={() => setShowForgotPassword(true)}
+                          className="text-blue-500 hover:text-blue-400 text-xs md:text-sm"
+                        >
+                          Forgot Password?
+                        </button>
                       </div>
                       <div className="relative">
                         <input
@@ -270,6 +308,106 @@ const LoginComponent = () => {
           )}
         </div>
       </AnimatePresence>
+
+      {/* Forgot Password Modal */}
+      {showForgotPassword && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            className="bg-[#1B2028] rounded-2xl p-6 md:p-8 max-w-md w-full shadow-2xl"
+          >
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-xl md:text-2xl font-semibold text-white">
+                Forgot Password?
+              </h2>
+              <button
+                onClick={() => {
+                  setShowForgotPassword(false);
+                  resetForgot();
+                }}
+                className="text-gray-400 hover:text-white text-2xl"
+              >
+                ×
+              </button>
+            </div>
+
+            <p className="text-gray-300 text-sm md:text-base mb-6">
+              Enter your email or phone number and we&apos;ll send you a link to
+              reset your password.
+            </p>
+
+            <form
+              onSubmit={handleSubmitForgot(onForgotPasswordSubmit)}
+              className="space-y-4"
+            >
+              <div>
+                <label className="block text-white mb-2 text-sm md:text-base">
+                  Email or Phone Number
+                </label>
+                <input
+                  type="text"
+                  {...registerForgot("identifier")}
+                  className="w-full px-3 md:px-4 py-2 md:py-3 border border-gray-600 rounded-lg focus:outline-none focus:border-blue-500 text-sm md:text-base"
+                  placeholder="Enter your email or phone"
+                />
+                {errorsForgot.identifier && (
+                  <p className="mt-1 text-red-500 text-xs md:text-sm">
+                    {errorsForgot.identifier.message}
+                  </p>
+                )}
+              </div>
+
+              <div className="flex gap-3">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowForgotPassword(false);
+                    resetForgot();
+                  }}
+                  className="flex-1 px-4 py-2 border border-gray-600 text-white rounded-lg hover:bg-gray-700 transition text-sm md:text-base"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={isSubmittingForgot}
+                  className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition disabled:bg-blue-400 disabled:cursor-not-allowed text-sm md:text-base flex items-center justify-center gap-2"
+                >
+                  {isSubmittingForgot ? (
+                    <>
+                      <svg
+                        className="animate-spin h-4 w-4 text-white"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                      >
+                        <circle
+                          className="opacity-25"
+                          cx="12"
+                          cy="12"
+                          r="10"
+                          stroke="currentColor"
+                          strokeWidth="4"
+                        ></circle>
+                        <path
+                          className="opacity-75"
+                          fill="currentColor"
+                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                        ></path>
+                      </svg>
+                      Sending...
+                    </>
+                  ) : (
+                    "Send Reset Link"
+                  )}
+                </button>
+              </div>
+            </form>
+          </motion.div>
+        </div>
+      )}
     </div>
   );
 };
