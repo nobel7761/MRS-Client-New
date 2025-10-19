@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { motion } from "framer-motion";
-import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { FaEye, FaEyeSlash, FaCheck, FaTimes } from "react-icons/fa";
 import { useAuth } from "@/contexts/AuthContext";
 import { RegistrationData } from "@/types/auth";
 
@@ -47,6 +47,7 @@ const RegistrationComponent = ({
   const { register: registerUser } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [password, setPassword] = useState("");
 
   const {
     register,
@@ -55,6 +56,19 @@ const RegistrationComponent = ({
   } = useForm<RegistrationFormValues>({
     resolver: yupResolver(schema),
   });
+
+  // Password strength criteria checker
+  const checkPasswordCriteria = (password: string) => {
+    return {
+      length: password.length >= 8 && password.length <= 16,
+      uppercase: /[A-Z]/.test(password),
+      lowercase: /[a-z]/.test(password),
+      number: /\d/.test(password),
+      specialChar: /[@$!%*?&]/.test(password),
+    };
+  };
+
+  const passwordCriteria = checkPasswordCriteria(password);
 
   const onSubmit = async (values: RegistrationFormValues) => {
     try {
@@ -214,7 +228,9 @@ const RegistrationComponent = ({
             <div className="relative">
               <input
                 type={showPassword ? "text" : "password"}
-                {...register("password")}
+                {...register("password", {
+                  onChange: (e) => setPassword(e.target.value),
+                })}
                 className="w-full px-4 py-3 border border-gray-600 rounded-lg focus:outline-none focus:border-primary"
               />
               <button
@@ -225,6 +241,102 @@ const RegistrationComponent = ({
                 {showPassword ? <FaEyeSlash /> : <FaEye />}
               </button>
             </div>
+
+            {/* Password Strength Indicator */}
+            {password && (
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="mt-3 p-3 bg-gray-800/50 rounded-lg border border-gray-700"
+              >
+                <p className="text-xs text-gray-400 mb-2">
+                  Password Requirements:
+                </p>
+                <div className="space-y-1">
+                  <div className="flex items-center gap-2">
+                    {passwordCriteria.length ? (
+                      <FaCheck className="text-green-500 text-sm" />
+                    ) : (
+                      <FaTimes className="text-red-500 text-sm" />
+                    )}
+                    <span
+                      className={`text-xs ${
+                        passwordCriteria.length
+                          ? "text-green-400"
+                          : "text-gray-400"
+                      }`}
+                    >
+                      8-16 characters
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    {passwordCriteria.uppercase ? (
+                      <FaCheck className="text-green-500 text-sm" />
+                    ) : (
+                      <FaTimes className="text-red-500 text-sm" />
+                    )}
+                    <span
+                      className={`text-xs ${
+                        passwordCriteria.uppercase
+                          ? "text-green-400"
+                          : "text-gray-400"
+                      }`}
+                    >
+                      One uppercase letter
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    {passwordCriteria.lowercase ? (
+                      <FaCheck className="text-green-500 text-sm" />
+                    ) : (
+                      <FaTimes className="text-red-500 text-sm" />
+                    )}
+                    <span
+                      className={`text-xs ${
+                        passwordCriteria.lowercase
+                          ? "text-green-400"
+                          : "text-gray-400"
+                      }`}
+                    >
+                      One lowercase letter
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    {passwordCriteria.number ? (
+                      <FaCheck className="text-green-500 text-sm" />
+                    ) : (
+                      <FaTimes className="text-red-500 text-sm" />
+                    )}
+                    <span
+                      className={`text-xs ${
+                        passwordCriteria.number
+                          ? "text-green-400"
+                          : "text-gray-400"
+                      }`}
+                    >
+                      One number
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    {passwordCriteria.specialChar ? (
+                      <FaCheck className="text-green-500 text-sm" />
+                    ) : (
+                      <FaTimes className="text-red-500 text-sm" />
+                    )}
+                    <span
+                      className={`text-xs ${
+                        passwordCriteria.specialChar
+                          ? "text-green-400"
+                          : "text-gray-400"
+                      }`}
+                    >
+                      One special character (@$!%*?&)
+                    </span>
+                  </div>
+                </div>
+              </motion.div>
+            )}
+
             {errors.password && (
               <p className="mt-1 text-red-500 text-sm">
                 {errors.password.message}
