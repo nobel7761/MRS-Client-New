@@ -50,3 +50,25 @@ export const resetPasswordWithToken = async (
   );
   return response.data;
 };
+
+export interface Collector {
+  _id: string;
+  firstName: string;
+  lastName: string;
+  phone: string;
+  email: string;
+  userType: string;
+  status: string;
+  role: string;
+  membershipCategory: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+/**
+ * Get all collectors (users with userType "COLLECTOR")
+ */
+export const getCollectors = async (): Promise<Collector[]> => {
+  const response = await api.get<Collector[]>("/user/collectors");
+  return response.data;
+};

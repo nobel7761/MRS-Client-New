@@ -89,6 +89,9 @@ export interface SilverJubileeParticipant {
   // Secret Code for identification
   secretCode?: string;
 
+  // Registered Under (Collector)
+  registeredUnder?: string;
+
   // Metadata
   createdAt?: string;
   updatedAt?: string;
@@ -110,6 +113,7 @@ export interface SilverJubileeFormData {
   paymentType: SilverJubileePaymentType;
   amount: number;
   comments: string;
+  registeredUnder?: string;
 
   // Parents Information
   fatherName: string;
@@ -144,6 +148,7 @@ export interface SilverJubileeGuestSubmissionData {
   amount: number;
   paymentType: string;
   comments?: string;
+  registeredUnder?: string;
 }
 
 export interface SilverJubileeBabySubmissionData {
@@ -156,4 +161,5 @@ export interface SilverJubileeBabySubmissionData {
   amount: number;
   paymentType: string;
   comments?: string;
+  registeredUnder?: string;
 }

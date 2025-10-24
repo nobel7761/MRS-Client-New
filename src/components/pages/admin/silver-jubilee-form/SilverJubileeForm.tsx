@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Fragment } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { Listbox, Transition } from "@headlessui/react";
 import { toast } from "react-toastify";
@@ -13,6 +13,7 @@ import {
   SilverJubileePaymentType,
 } from "@/types/silverJubilee";
 import { silverJubileeApi } from "@/lib/silverJubileeApi";
+import { getCollectors, Collector } from "@/lib/authApi";
 
 // Icon Components
 const ChevronUpDownIcon = () => (
@@ -76,6 +77,8 @@ interface FormData {
   guestPhoneNumber: string;
   // Comments field for all types
   comments: string;
+  // Registered Under field
+  registeredUnder: { id: string; name: string } | null;
 }
 
 const participantCategories = [
@@ -154,6 +157,8 @@ const SilverJubileeForm = () => {
   >([]);
   const [isLoadingParticipants, setIsLoadingParticipants] = useState(false);
   const [noParticipantsFound, setNoParticipantsFound] = useState(false);
+  const [collectors, setCollectors] = useState<Collector[]>([]);
+  const [isLoadingCollectors, setIsLoadingCollectors] = useState(false);
 
   const {
     register,
@@ -189,6 +194,7 @@ const SilverJubileeForm = () => {
       relation: "",
       guestPhoneNumber: "",
       comments: "",
+      registeredUnder: null,
     },
   });
 
@@ -252,6 +258,24 @@ const SilverJubileeForm = () => {
       }
     }
   }, [isGuest, isBaby, mainParticipant, setValue]);
+
+  // Load collectors on component mount
+  useEffect(() => {
+    const loadCollectors = async () => {
+      setIsLoadingCollectors(true);
+      try {
+        const collectorsData = await getCollectors();
+        setCollectors(collectorsData);
+      } catch (error) {
+        console.error("Error loading collectors:", error);
+        toast.error("Failed to load collectors list");
+      } finally {
+        setIsLoadingCollectors(false);
+      }
+    };
+
+    loadCollectors();
+  }, []);
 
   // Fetch main participants when batch and group are selected
   useEffect(() => {
@@ -358,6 +382,7 @@ const SilverJubileeForm = () => {
           amount: data.amount,
           paymentType: data.paymentType?.value,
           comments: data.comments || "",
+          registeredUnder: data.registeredUnder?.id,
         };
       } else if (isBaby) {
         // Baby submission data
@@ -371,6 +396,7 @@ const SilverJubileeForm = () => {
           amount: data.amount,
           paymentType: data.paymentType?.value,
           comments: data.comments || "",
+          registeredUnder: data.registeredUnder?.id,
         };
       } else {
         // Alumni/Student/Lifetime membership submission data
@@ -387,6 +413,7 @@ const SilverJubileeForm = () => {
           paymentType: data.paymentType?.value,
           amount: data.amount,
           comments: data.comments || "",
+          registeredUnder: data.registeredUnder?.id,
           fatherName: data.fatherName,
           fatherPhoneNumber: data.fatherPhoneNumber,
           fatherOccupation: data.fatherOccupation,
@@ -1248,6 +1275,83 @@ const SilverJubileeForm = () => {
                         </div>
                       </div>
 
+                      {/* Registered Under Field for Guest/Baby */}
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Registered Under
+                        </label>
+                        <Controller
+                          name="registeredUnder"
+                          control={control}
+                          render={({ field }) => (
+                            <Listbox
+                              value={field.value}
+                              onChange={field.onChange}
+                            >
+                              <div className="relative">
+                                <Listbox.Button className="relative w-full cursor-default rounded-lg bg-white py-3 pl-3 pr-10 text-left shadow-md focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 sm:text-sm border border-gray-300">
+                                  <span className="block truncate">
+                                    {field.value
+                                      ? `${field.value.name} (${field.value.id})`
+                                      : isLoadingCollectors
+                                      ? "Loading collectors..."
+                                      : "Select a collector"}
+                                  </span>
+                                  <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
+                                    <ChevronUpDownIcon />
+                                  </span>
+                                </Listbox.Button>
+                                <Transition
+                                  as={Fragment}
+                                  leave="transition ease-in duration-100"
+                                  leaveFrom="opacity-100"
+                                  leaveTo="opacity-0"
+                                >
+                                  <Listbox.Options className="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm z-10">
+                                    {collectors.map((collector) => (
+                                      <Listbox.Option
+                                        key={collector._id}
+                                        className={({ active }) =>
+                                          `relative cursor-default select-none py-2 pl-10 pr-4 ${
+                                            active
+                                              ? "bg-amber-100 text-amber-900"
+                                              : "text-gray-900"
+                                          }`
+                                        }
+                                        value={{
+                                          id: collector._id,
+                                          name: `${collector.firstName} ${collector.lastName}`,
+                                        }}
+                                      >
+                                        {({ selected }) => (
+                                          <>
+                                            <span
+                                              className={`block truncate ${
+                                                selected
+                                                  ? "font-medium"
+                                                  : "font-normal"
+                                              }`}
+                                            >
+                                              {collector.firstName}{" "}
+                                              {collector.lastName}
+                                            </span>
+                                            {selected ? (
+                                              <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-amber-600">
+                                                <CheckIcon />
+                                              </span>
+                                            ) : null}
+                                          </>
+                                        )}
+                                      </Listbox.Option>
+                                    ))}
+                                  </Listbox.Options>
+                                </Transition>
+                              </div>
+                            </Listbox>
+                          )}
+                        />
+                      </div>
+
                       {/* Comments Field for Guest/Baby */}
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -1992,6 +2096,77 @@ const SilverJubileeForm = () => {
                     )}
                   </div>
                 </div>
+              </div>
+
+              {/* Registered Under Field for Alumni/Student/Lifetime */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Registered Under
+                </label>
+                <Controller
+                  name="registeredUnder"
+                  control={control}
+                  render={({ field }) => (
+                    <Listbox value={field.value} onChange={field.onChange}>
+                      <div className="relative">
+                        <Listbox.Button className="relative w-full cursor-default rounded-lg bg-white py-3 pl-3 pr-10 text-left shadow-md focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 sm:text-sm border border-gray-300">
+                          <span className="block truncate">
+                            {field.value
+                              ? `${field.value.name} (${field.value.id})`
+                              : isLoadingCollectors
+                              ? "Loading collectors..."
+                              : "Select a collector"}
+                          </span>
+                          <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
+                            <ChevronUpDownIcon />
+                          </span>
+                        </Listbox.Button>
+                        <Transition
+                          as={Fragment}
+                          leave="transition ease-in duration-100"
+                          leaveFrom="opacity-100"
+                          leaveTo="opacity-0"
+                        >
+                          <Listbox.Options className="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm z-10">
+                            {collectors.map((collector) => (
+                              <Listbox.Option
+                                key={collector._id}
+                                className={({ active }) =>
+                                  `relative cursor-default select-none py-2 pl-10 pr-4 ${
+                                    active
+                                      ? "bg-amber-100 text-amber-900"
+                                      : "text-gray-900"
+                                  }`
+                                }
+                                value={{
+                                  id: collector._id,
+                                  name: `${collector.firstName} ${collector.lastName}`,
+                                }}
+                              >
+                                {({ selected }) => (
+                                  <>
+                                    <span
+                                      className={`block truncate ${
+                                        selected ? "font-medium" : "font-normal"
+                                      }`}
+                                    >
+                                      {collector.firstName} {collector.lastName}
+                                    </span>
+                                    {selected ? (
+                                      <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-amber-600">
+                                        <CheckIcon />
+                                      </span>
+                                    ) : null}
+                                  </>
+                                )}
+                              </Listbox.Option>
+                            ))}
+                          </Listbox.Options>
+                        </Transition>
+                      </div>
+                    </Listbox>
+                  )}
+                />
               </div>
 
               {/* Comments Field for Alumni/Student/Lifetime */}

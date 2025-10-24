@@ -353,40 +353,40 @@ const SilverJubileeParticipantsPage = () => {
         },
       },
     },
-    canViewEmailStatus && {
-      name: "isEmailSent",
-      label: "Email Status",
-      options: {
-        filter: true,
-        sort: false,
-        display: true,
-        customBodyRender: (value: boolean, tableMeta: any) => {
-          const rowData = data[tableMeta.rowIndex];
-          if (value === false) {
-            return (
-              <Button
-                variant="contained"
-                color="primary"
-                size="small"
-                onClick={() => handleSendEmail(rowData)}
-                sx={{
-                  textTransform: "none",
-                  fontSize: "0.875rem",
-                  padding: "6px 16px",
-                }}
-              >
-                Send Email
-              </Button>
-            );
-          }
-          return (
-            <span className="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-semibold bg-green-100 text-green-800">
-              Sent
-            </span>
-          );
-        },
-      },
-    },
+    // canViewEmailStatus && {
+    //   name: "isEmailSent",
+    //   label: "Email Status",
+    //   options: {
+    //     filter: true,
+    //     sort: false,
+    //     display: true,
+    //     customBodyRender: (value: boolean, tableMeta: any) => {
+    //       const rowData = data[tableMeta.rowIndex];
+    //       if (value === false) {
+    //         return (
+    //           <Button
+    //             variant="contained"
+    //             color="primary"
+    //             size="small"
+    //             onClick={() => handleSendEmail(rowData)}
+    //             sx={{
+    //               textTransform: "none",
+    //               fontSize: "0.875rem",
+    //               padding: "6px 16px",
+    //             }}
+    //           >
+    //             Send Email
+    //           </Button>
+    //         );
+    //       }
+    //       return (
+    //         <span className="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-semibold bg-green-100 text-green-800">
+    //           Sent
+    //         </span>
+    //       );
+    //     },
+    //   },
+    // },
   ].filter(Boolean) as MUIDataTableColumnDef[];
 
   if (loading) {
