@@ -15,6 +15,26 @@ import StatusChip from "@/components/shared/custom-components/StatusChip";
 import { useAuth } from "@/contexts/AuthContext";
 import { UserRole, UserType } from "@/types/auth";
 import { directApi } from "@/lib/directApi";
+import IconButton from "@mui/material/IconButton";
+import Dialog from "@mui/material/Dialog";
+import DialogTitle from "@mui/material/DialogTitle";
+import DialogContent from "@mui/material/DialogContent";
+import DialogActions from "@mui/material/DialogActions";
+import TextField from "@mui/material/TextField";
+import Select from "@mui/material/Select";
+import MenuItem from "@mui/material/MenuItem";
+import FormControl from "@mui/material/FormControl";
+import InputLabel from "@mui/material/InputLabel";
+import CircularProgress from "@mui/material/CircularProgress";
+import { FaEdit } from "react-icons/fa";
+import { MdDelete } from "react-icons/md";
+import {
+  SilverJubileeParticipantCategory,
+  SilverJubileeGroup,
+  SilverJubileeGender,
+  SilverJubileeBloodGroup,
+  SilverJubileePaymentType,
+} from "@/types/silverJubilee";
 
 const MUIDataTable = MUIDataTableImport as unknown as React.ComponentType<any>;
 
@@ -50,6 +70,22 @@ const SilverJubileeParticipantsPage = () => {
   const [data, setData] = useState<SilverJubileeParticipant[]>([]);
   const [loading, setLoading] = useState(true);
   const { user } = useAuth();
+
+  // Edit Modal State
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [selectedParticipant, setSelectedParticipant] =
+    useState<SilverJubileeParticipant | null>(null);
+  const [editFormData, setEditFormData] = useState<
+    Partial<SilverJubileeParticipant>
+  >({});
+  const [editLoading, setEditLoading] = useState(false);
+
+  // Delete Modal State
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [participantToDelete, setParticipantToDelete] =
+    useState<SilverJubileeParticipant | null>(null);
+  const [deleteConfirmName, setDeleteConfirmName] = useState("");
+  const [deleteLoading, setDeleteLoading] = useState(false);
 
   // Check if user can view secret code
   const canViewSecretCode =
@@ -100,6 +136,114 @@ const SilverJubileeParticipantsPage = () => {
     }
   };
 
+  // Edit Participant Handlers
+  const handleEditClick = async (participantId: string) => {
+    try {
+      const response = await directApi.get(`/silver-jubilee/${participantId}`);
+      const participantData = response.data;
+      setSelectedParticipant(participantData);
+      setEditFormData({
+        participantCategory: participantData.participantCategory,
+        fullName: participantData.fullName,
+        phoneNumber: participantData.phoneNumber,
+        alternativePhoneNumber: participantData.alternativePhoneNumber,
+        email: participantData.email,
+        hscPassingYear: participantData.hscPassingYear,
+        group: participantData.group,
+        gender: participantData.gender,
+        bloodGroup: participantData.bloodGroup,
+        paymentType: participantData.paymentType,
+        amount: participantData.amount,
+        comments: participantData.comments,
+        fatherName: participantData.fatherName,
+        fatherPhoneNumber: participantData.fatherPhoneNumber,
+        fatherOccupation: participantData.fatherOccupation,
+        motherName: participantData.motherName,
+        motherPhoneNumber: participantData.motherPhoneNumber,
+        motherOccupation: participantData.motherOccupation,
+        // Main participant fields for guest/baby
+        mainParticipantBatch: participantData.mainParticipantBatch,
+        mainParticipantGroup: participantData.mainParticipantGroup,
+        mainParticipantId: participantData.mainParticipantId,
+        mainParticipantName: participantData.mainParticipantName,
+        // Guest fields
+        guestName: participantData.guestName,
+        relation: participantData.relation,
+        guestMobileNumber: participantData.guestMobileNumber,
+        // Baby fields
+        babyName: participantData.babyName,
+        babyPhone: participantData.babyPhone,
+      });
+      setEditModalOpen(true);
+    } catch (error) {
+      console.error("Error fetching participant details:", error);
+      toast.error("Failed to fetch participant details");
+    }
+  };
+
+  const handleEditSubmit = async () => {
+    if (!selectedParticipant) return;
+
+    setEditLoading(true);
+    try {
+      await directApi.patch(
+        `/silver-jubilee/${selectedParticipant._id}`,
+        editFormData
+      );
+      toast.success("Participant updated successfully");
+      setEditModalOpen(false);
+      setSelectedParticipant(null);
+      setEditFormData({});
+      fetchData(); // Refresh the data
+    } catch (error) {
+      console.error("Error updating participant:", error);
+      toast.error("Failed to update participant");
+    } finally {
+      setEditLoading(false);
+    }
+  };
+
+  const handleEditClose = () => {
+    setEditModalOpen(false);
+    setSelectedParticipant(null);
+    setEditFormData({});
+  };
+
+  // Delete Participant Handlers
+  const handleDeleteClick = (participant: SilverJubileeParticipant) => {
+    setParticipantToDelete(participant);
+    setDeleteConfirmName("");
+    setDeleteModalOpen(true);
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!participantToDelete) return;
+
+    setDeleteLoading(true);
+    try {
+      await directApi.delete(`/silver-jubilee/${participantToDelete._id}`);
+      toast.success("Participant deleted successfully");
+      setDeleteModalOpen(false);
+      setParticipantToDelete(null);
+      setDeleteConfirmName("");
+      fetchData(); // Refresh the data
+    } catch (error) {
+      console.error("Error deleting participant:", error);
+      toast.error("Failed to delete participant");
+    } finally {
+      setDeleteLoading(false);
+    }
+  };
+
+  const handleDeleteClose = () => {
+    setDeleteModalOpen(false);
+    setParticipantToDelete(null);
+    setDeleteConfirmName("");
+  };
+
+  const isDeleteEnabled =
+    participantToDelete && deleteConfirmName === participantToDelete.fullName;
+
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("en-US", {
       year: "numeric",
@@ -127,14 +271,26 @@ const SilverJubileeParticipantsPage = () => {
         customBodyRender: (value: string, tableMeta: any) => {
           const rowData = data[tableMeta.rowIndex];
           if (rowData.participantCategory === "Guest") {
-            return `${rowData.guestName || "-"} || Guest of: ${
-              rowData.mainParticipantName || "-"
-            }`;
+            return (
+              <div>
+                <span className="font-bold">{rowData.guestName || "-"}</span>
+                <br />
+                <span className="text-gray-500 font-light italic">
+                  Guest of: {rowData.mainParticipantName || "-"}
+                </span>
+              </div>
+            );
           }
           if (rowData.participantCategory === "Baby") {
-            return `${rowData.babyName || "-"} || Baby of: ${
-              rowData.mainParticipantName || "-"
-            }`;
+            return (
+              <div>
+                <span className="font-bold">{rowData.babyName || "-"}</span>
+                <br />
+                <span className="text-gray-500 font-light italic">
+                  Baby of: {rowData.mainParticipantName || "-"}
+                </span>
+              </div>
+            );
           }
           return value || "-";
         },
@@ -339,8 +495,23 @@ const SilverJubileeParticipantsPage = () => {
       },
     },
     {
-      name: "registeredBy",
-      label: "Registered By",
+      name: "registeredUnder",
+      label: "Registered Under",
+      options: {
+        filter: true,
+        sort: true,
+        display: false,
+        customBodyRender: (value: any) => {
+          if (!value) return "-";
+          return (
+            `${value.firstName || ""} ${value.lastName || ""}`.trim() || "-"
+          );
+        },
+      },
+    },
+    {
+      name: "formFilledUpBy",
+      label: "Form Filled Up By",
       options: {
         filter: true,
         sort: true,
@@ -387,6 +558,34 @@ const SilverJubileeParticipantsPage = () => {
     //     },
     //   },
     // },
+    // Add Actions column
+    canViewEmailStatus && {
+      name: "_id",
+      label: "Actions",
+      options: {
+        filter: false,
+        sort: false,
+        customBodyRender: (value: string, tableMeta: any) => {
+          const rowData = data[tableMeta.rowIndex];
+          return (
+            <div className="flex items-center gap-4">
+              {/* Edit Icon */}
+
+              <FaEdit
+                className="text-indigo-500 text-xl cursor-pointer hover:text-indigo-600"
+                onClick={() => handleEditClick(value)}
+              />
+
+              {/* Delete/Bin Icon */}
+              <MdDelete
+                className="text-red-500 text-xl cursor-pointer hover:text-red-600"
+                onClick={() => handleDeleteClick(rowData)}
+              />
+            </div>
+          );
+        },
+      },
+    },
   ].filter(Boolean) as MUIDataTableColumnDef[];
 
   if (loading) {
@@ -423,6 +622,570 @@ const SilverJubileeParticipantsPage = () => {
           </div>
         </div>
       </motion.div>
+
+      {/* Edit Participant Modal */}
+      <Dialog
+        open={editModalOpen}
+        onClose={handleEditClose}
+        maxWidth="md"
+        fullWidth
+      >
+        <DialogTitle>Edit Silver Jubilee Participant</DialogTitle>
+        <DialogContent>
+          <div className="space-y-4 mt-4">
+            {/* Participant Category */}
+            <FormControl fullWidth>
+              <InputLabel>Participant Category</InputLabel>
+              <Select
+                value={editFormData.participantCategory || ""}
+                label="Participant Category"
+                onChange={(e) =>
+                  setEditFormData({
+                    ...editFormData,
+                    participantCategory: e.target
+                      .value as SilverJubileeParticipantCategory,
+                  })
+                }
+              >
+                <MenuItem value={SilverJubileeParticipantCategory.ALUMNI}>
+                  Alumni
+                </MenuItem>
+                <MenuItem value={SilverJubileeParticipantCategory.STUDENT}>
+                  Student
+                </MenuItem>
+                <MenuItem value={SilverJubileeParticipantCategory.GUEST}>
+                  Guest
+                </MenuItem>
+                <MenuItem value={SilverJubileeParticipantCategory.BABY}>
+                  Baby
+                </MenuItem>
+                <MenuItem
+                  value={SilverJubileeParticipantCategory.LIFETIMEMEMBERSHIP}
+                >
+                  Lifetime Membership
+                </MenuItem>
+              </Select>
+            </FormControl>
+
+            {/* Name Fields */}
+            <div className="grid grid-cols-2 gap-4">
+              <TextField
+                label="Full Name"
+                value={editFormData.fullName || ""}
+                onChange={(e) =>
+                  setEditFormData({
+                    ...editFormData,
+                    fullName: e.target.value,
+                  })
+                }
+                fullWidth
+                required
+              />
+              <TextField
+                label="Phone Number"
+                value={editFormData.phoneNumber || ""}
+                onChange={(e) =>
+                  setEditFormData({
+                    ...editFormData,
+                    phoneNumber: e.target.value,
+                  })
+                }
+                fullWidth
+                required
+              />
+            </div>
+
+            {/* Email and Alternative Phone */}
+            <div className="grid grid-cols-2 gap-4">
+              <TextField
+                label="Email"
+                type="email"
+                value={editFormData.email || ""}
+                onChange={(e) =>
+                  setEditFormData({ ...editFormData, email: e.target.value })
+                }
+                fullWidth
+                required
+              />
+              <TextField
+                label="Alternative Phone"
+                value={editFormData.alternativePhoneNumber || ""}
+                onChange={(e) =>
+                  setEditFormData({
+                    ...editFormData,
+                    alternativePhoneNumber: e.target.value,
+                  })
+                }
+                fullWidth
+              />
+            </div>
+
+            {/* HSC Year and Group */}
+            <div className="grid grid-cols-2 gap-4">
+              <TextField
+                label="HSC Passing Year"
+                type="number"
+                value={editFormData.hscPassingYear || ""}
+                onChange={(e) =>
+                  setEditFormData({
+                    ...editFormData,
+                    hscPassingYear: parseInt(e.target.value) || 0,
+                  })
+                }
+                fullWidth
+                required
+              />
+              <FormControl fullWidth>
+                <InputLabel>Group</InputLabel>
+                <Select
+                  value={editFormData.group || ""}
+                  label="Group"
+                  onChange={(e) =>
+                    setEditFormData({
+                      ...editFormData,
+                      group: e.target.value as SilverJubileeGroup,
+                    })
+                  }
+                >
+                  <MenuItem value={SilverJubileeGroup.SCIENCE}>
+                    Science
+                  </MenuItem>
+                  <MenuItem value={SilverJubileeGroup.BUSINESS_STUDIES}>
+                    Business Studies
+                  </MenuItem>
+                  <MenuItem value={SilverJubileeGroup.HUMANITIES}>
+                    Humanities
+                  </MenuItem>
+                </Select>
+              </FormControl>
+            </div>
+
+            {/* Gender and Blood Group */}
+            <div className="grid grid-cols-2 gap-4">
+              <FormControl fullWidth>
+                <InputLabel>Gender</InputLabel>
+                <Select
+                  value={editFormData.gender || ""}
+                  label="Gender"
+                  onChange={(e) =>
+                    setEditFormData({
+                      ...editFormData,
+                      gender: e.target.value as SilverJubileeGender,
+                    })
+                  }
+                >
+                  <MenuItem value={SilverJubileeGender.MALE}>Male</MenuItem>
+                  <MenuItem value={SilverJubileeGender.FEMALE}>Female</MenuItem>
+                </Select>
+              </FormControl>
+
+              <FormControl fullWidth>
+                <InputLabel>Blood Group</InputLabel>
+                <Select
+                  value={editFormData.bloodGroup || ""}
+                  label="Blood Group"
+                  onChange={(e) =>
+                    setEditFormData({
+                      ...editFormData,
+                      bloodGroup: e.target.value as SilverJubileeBloodGroup,
+                    })
+                  }
+                >
+                  <MenuItem value={SilverJubileeBloodGroup.DONT_KNOW}>
+                    Don't know
+                  </MenuItem>
+                  <MenuItem value={SilverJubileeBloodGroup.A_POSITIVE}>
+                    A+
+                  </MenuItem>
+                  <MenuItem value={SilverJubileeBloodGroup.B_POSITIVE}>
+                    B+
+                  </MenuItem>
+                  <MenuItem value={SilverJubileeBloodGroup.O_POSITIVE}>
+                    O+
+                  </MenuItem>
+                  <MenuItem value={SilverJubileeBloodGroup.AB_POSITIVE}>
+                    AB+
+                  </MenuItem>
+                  <MenuItem value={SilverJubileeBloodGroup.AB_NEGATIVE}>
+                    AB-
+                  </MenuItem>
+                  <MenuItem value={SilverJubileeBloodGroup.A_NEGATIVE}>
+                    A-
+                  </MenuItem>
+                  <MenuItem value={SilverJubileeBloodGroup.B_NEGATIVE}>
+                    B-
+                  </MenuItem>
+                  <MenuItem value={SilverJubileeBloodGroup.O_NEGATIVE}>
+                    O-
+                  </MenuItem>
+                </Select>
+              </FormControl>
+            </div>
+
+            {/* Payment Type and Amount */}
+            <div className="grid grid-cols-2 gap-4">
+              <FormControl fullWidth>
+                <InputLabel>Payment Type</InputLabel>
+                <Select
+                  value={editFormData.paymentType || ""}
+                  label="Payment Type"
+                  onChange={(e) =>
+                    setEditFormData({
+                      ...editFormData,
+                      paymentType: e.target.value as SilverJubileePaymentType,
+                    })
+                  }
+                >
+                  <MenuItem value={SilverJubileePaymentType.BKASH}>
+                    Bkash
+                  </MenuItem>
+                  <MenuItem value={SilverJubileePaymentType.NAGAD}>
+                    Nagad
+                  </MenuItem>
+                  <MenuItem value={SilverJubileePaymentType.CASH}>
+                    Cash
+                  </MenuItem>
+                  <MenuItem value={SilverJubileePaymentType.BANK_ACCOUNT}>
+                    Bank Account
+                  </MenuItem>
+                </Select>
+              </FormControl>
+
+              <TextField
+                label="Amount"
+                type="number"
+                value={editFormData.amount || ""}
+                onChange={(e) =>
+                  setEditFormData({
+                    ...editFormData,
+                    amount: parseFloat(e.target.value) || 0,
+                  })
+                }
+                fullWidth
+                required
+              />
+            </div>
+
+            {/* Comments */}
+            <TextField
+              label="Comments"
+              value={editFormData.comments || ""}
+              onChange={(e) =>
+                setEditFormData({ ...editFormData, comments: e.target.value })
+              }
+              fullWidth
+              multiline
+              rows={3}
+            />
+
+            {/* Parents Information */}
+            <div className="border-t pt-4">
+              <h3 className="text-lg font-semibold mb-4">
+                Parents Information
+              </h3>
+
+              {/* Father's Information */}
+              <div className="grid grid-cols-3 gap-4 mb-4">
+                <TextField
+                  label="Father's Name"
+                  value={editFormData.fatherName || ""}
+                  onChange={(e) =>
+                    setEditFormData({
+                      ...editFormData,
+                      fatherName: e.target.value,
+                    })
+                  }
+                  fullWidth
+                />
+                <TextField
+                  label="Father's Phone"
+                  value={editFormData.fatherPhoneNumber || ""}
+                  onChange={(e) =>
+                    setEditFormData({
+                      ...editFormData,
+                      fatherPhoneNumber: e.target.value,
+                    })
+                  }
+                  fullWidth
+                />
+                <TextField
+                  label="Father's Occupation"
+                  value={editFormData.fatherOccupation || ""}
+                  onChange={(e) =>
+                    setEditFormData({
+                      ...editFormData,
+                      fatherOccupation: e.target.value,
+                    })
+                  }
+                  fullWidth
+                />
+              </div>
+
+              {/* Mother's Information */}
+              <div className="grid grid-cols-3 gap-4">
+                <TextField
+                  label="Mother's Name"
+                  value={editFormData.motherName || ""}
+                  onChange={(e) =>
+                    setEditFormData({
+                      ...editFormData,
+                      motherName: e.target.value,
+                    })
+                  }
+                  fullWidth
+                />
+                <TextField
+                  label="Mother's Phone"
+                  value={editFormData.motherPhoneNumber || ""}
+                  onChange={(e) =>
+                    setEditFormData({
+                      ...editFormData,
+                      motherPhoneNumber: e.target.value,
+                    })
+                  }
+                  fullWidth
+                />
+                <TextField
+                  label="Mother's Occupation"
+                  value={editFormData.motherOccupation || ""}
+                  onChange={(e) =>
+                    setEditFormData({
+                      ...editFormData,
+                      motherOccupation: e.target.value,
+                    })
+                  }
+                  fullWidth
+                />
+              </div>
+            </div>
+
+            {/* Guest/Baby Information (if applicable) */}
+            {(editFormData.participantCategory ===
+              SilverJubileeParticipantCategory.GUEST ||
+              editFormData.participantCategory ===
+                SilverJubileeParticipantCategory.BABY) && (
+              <div className="border-t pt-4">
+                <h3 className="text-lg font-semibold mb-4">
+                  {editFormData.participantCategory ===
+                  SilverJubileeParticipantCategory.GUEST
+                    ? "Guest Information"
+                    : "Baby Information"}
+                </h3>
+
+                {/* Main Participant Batch and Group */}
+                <div className="grid grid-cols-2 gap-4 mb-4">
+                  <TextField
+                    label="Main Participant Batch"
+                    type="number"
+                    value={editFormData.mainParticipantBatch || ""}
+                    onChange={(e) =>
+                      setEditFormData({
+                        ...editFormData,
+                        mainParticipantBatch: parseInt(e.target.value) || 0,
+                      })
+                    }
+                    fullWidth
+                    required
+                  />
+                  <FormControl fullWidth>
+                    <InputLabel>Main Participant Group</InputLabel>
+                    <Select
+                      value={editFormData.mainParticipantGroup || ""}
+                      label="Main Participant Group"
+                      onChange={(e) =>
+                        setEditFormData({
+                          ...editFormData,
+                          mainParticipantGroup: e.target
+                            .value as SilverJubileeGroup,
+                        })
+                      }
+                    >
+                      <MenuItem value={SilverJubileeGroup.SCIENCE}>
+                        Science
+                      </MenuItem>
+                      <MenuItem value={SilverJubileeGroup.BUSINESS_STUDIES}>
+                        Business Studies
+                      </MenuItem>
+                      <MenuItem value={SilverJubileeGroup.HUMANITIES}>
+                        Humanities
+                      </MenuItem>
+                    </Select>
+                  </FormControl>
+                </div>
+
+                {/* Main Participant Name and ID */}
+                <div className="grid grid-cols-2 gap-4 mb-4">
+                  <TextField
+                    label="Main Participant Name"
+                    value={editFormData.mainParticipantName || ""}
+                    onChange={(e) =>
+                      setEditFormData({
+                        ...editFormData,
+                        mainParticipantName: e.target.value,
+                      })
+                    }
+                    fullWidth
+                    required
+                  />
+                  <TextField
+                    label="Main Participant ID"
+                    value={editFormData.mainParticipantId || ""}
+                    onChange={(e) =>
+                      setEditFormData({
+                        ...editFormData,
+                        mainParticipantId: e.target.value,
+                      })
+                    }
+                    fullWidth
+                    required
+                  />
+                </div>
+
+                {/* Guest/Baby Name and Relation (for guests only) */}
+                <div className="grid grid-cols-2 gap-4 mb-4">
+                  <TextField
+                    label={
+                      editFormData.participantCategory ===
+                      SilverJubileeParticipantCategory.GUEST
+                        ? "Guest Name"
+                        : "Baby Name"
+                    }
+                    value={
+                      editFormData.participantCategory ===
+                      SilverJubileeParticipantCategory.GUEST
+                        ? editFormData.guestName || ""
+                        : editFormData.babyName || ""
+                    }
+                    onChange={(e) =>
+                      setEditFormData({
+                        ...editFormData,
+                        ...(editFormData.participantCategory ===
+                        SilverJubileeParticipantCategory.GUEST
+                          ? { guestName: e.target.value }
+                          : { babyName: e.target.value }),
+                      })
+                    }
+                    fullWidth
+                    required
+                  />
+                  {editFormData.participantCategory ===
+                    SilverJubileeParticipantCategory.GUEST && (
+                    <TextField
+                      label="Relation"
+                      value={editFormData.relation || ""}
+                      onChange={(e) =>
+                        setEditFormData({
+                          ...editFormData,
+                          relation: e.target.value,
+                        })
+                      }
+                      fullWidth
+                      required
+                      placeholder="e.g., Spouse, Friend"
+                    />
+                  )}
+                </div>
+
+                {/* Phone Number */}
+                <div className="mb-4">
+                  <TextField
+                    label="Phone Number"
+                    value={
+                      editFormData.participantCategory ===
+                      SilverJubileeParticipantCategory.GUEST
+                        ? editFormData.guestMobileNumber || ""
+                        : editFormData.babyPhone || ""
+                    }
+                    onChange={(e) =>
+                      setEditFormData({
+                        ...editFormData,
+                        ...(editFormData.participantCategory ===
+                        SilverJubileeParticipantCategory.GUEST
+                          ? { guestMobileNumber: e.target.value }
+                          : { babyPhone: e.target.value }),
+                      })
+                    }
+                    fullWidth
+                    required
+                  />
+                </div>
+              </div>
+            )}
+          </div>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleEditClose} disabled={editLoading}>
+            Cancel
+          </Button>
+          <Button
+            onClick={handleEditSubmit}
+            variant="contained"
+            color="primary"
+            disabled={editLoading}
+            startIcon={editLoading ? <CircularProgress size={20} /> : null}
+          >
+            {editLoading ? "Updating..." : "Update Participant"}
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Delete Participant Modal */}
+      <Dialog
+        open={deleteModalOpen}
+        onClose={handleDeleteClose}
+        maxWidth="sm"
+        fullWidth
+      >
+        <DialogTitle className="text-red-600">
+          Delete Silver Jubilee Participant
+        </DialogTitle>
+        <DialogContent>
+          <div className="space-y-4 mt-4">
+            <p className="text-gray-700">
+              Are you sure you want to delete this participant?
+            </p>
+            {participantToDelete && (
+              <div className="bg-gray-100 p-4 rounded-lg">
+                <p className="font-semibold text-gray-800">
+                  {participantToDelete.fullName}
+                </p>
+                <p className="text-sm text-gray-600">
+                  {participantToDelete.email}
+                </p>
+                <p className="text-sm text-gray-600">
+                  Category: {participantToDelete.participantCategory}
+                </p>
+              </div>
+            )}
+            <p className="text-sm text-red-600 font-medium">
+              To confirm deletion, please type the participant's full name:{" "}
+              <span className="font-bold">{participantToDelete?.fullName}</span>
+            </p>
+            <TextField
+              label="Type full name to confirm"
+              value={deleteConfirmName}
+              onChange={(e) => setDeleteConfirmName(e.target.value)}
+              fullWidth
+              placeholder={participantToDelete?.fullName || ""}
+              autoFocus
+            />
+          </div>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleDeleteClose} disabled={deleteLoading}>
+            Cancel
+          </Button>
+          <Button
+            onClick={handleDeleteConfirm}
+            variant="contained"
+            color="error"
+            disabled={!isDeleteEnabled || deleteLoading}
+            startIcon={deleteLoading ? <CircularProgress size={20} /> : null}
+          >
+            {deleteLoading ? "Deleting..." : "Delete Participant"}
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 };

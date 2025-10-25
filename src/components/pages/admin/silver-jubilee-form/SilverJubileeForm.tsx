@@ -1928,15 +1928,11 @@ const SilverJubileeForm = () => {
                   {/* Father Name */}
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Father's Name <span className="text-red-500">*</span>
+                      Father's Name
                     </label>
                     <input
                       type="text"
-                      {...register("fatherName", {
-                        required: !isGuestOrBaby
-                          ? "Father's name is required"
-                          : false,
-                      })}
+                      {...register("fatherName")}
                       className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:border-transparent ${
                         errors.fatherName
                           ? "border-red-500 focus:ring-red-500"
@@ -1954,16 +1950,11 @@ const SilverJubileeForm = () => {
                   {/* Father Occupation */}
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Father's Occupation{" "}
-                      <span className="text-red-500">*</span>
+                      Father's Occupation
                     </label>
                     <input
                       type="text"
-                      {...register("fatherOccupation", {
-                        required: !isGuestOrBaby
-                          ? "Father's occupation is required"
-                          : false,
-                      })}
+                      {...register("fatherOccupation")}
                       className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:border-transparent ${
                         errors.fatherOccupation
                           ? "border-red-500 focus:ring-red-500"
@@ -1981,14 +1972,11 @@ const SilverJubileeForm = () => {
                   {/* Father Phone Number */}
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Father's Phone <span className="text-red-500">*</span>
+                      Father's Phone
                     </label>
                     <input
                       type="tel"
                       {...register("fatherPhoneNumber", {
-                        required: !isGuestOrBaby
-                          ? "Father's phone number is required"
-                          : false,
                         pattern: {
                           value: phoneRegex,
                           message:
@@ -2015,15 +2003,11 @@ const SilverJubileeForm = () => {
                   {/* Mother Name */}
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Mother's Name <span className="text-red-500">*</span>
+                      Mother's Name
                     </label>
                     <input
                       type="text"
-                      {...register("motherName", {
-                        required: !isGuestOrBaby
-                          ? "Mother's name is required"
-                          : false,
-                      })}
+                      {...register("motherName")}
                       className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:border-transparent ${
                         errors.motherName
                           ? "border-red-500 focus:ring-red-500"
@@ -2041,16 +2025,11 @@ const SilverJubileeForm = () => {
                   {/* Mother Occupation */}
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Mother's Occupation{" "}
-                      <span className="text-red-500">*</span>
+                      Mother's Occupation
                     </label>
                     <input
                       type="text"
-                      {...register("motherOccupation", {
-                        required: !isGuestOrBaby
-                          ? "Mother's occupation is required"
-                          : false,
-                      })}
+                      {...register("motherOccupation")}
                       className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:border-transparent ${
                         errors.motherOccupation
                           ? "border-red-500 focus:ring-red-500"
@@ -2068,14 +2047,11 @@ const SilverJubileeForm = () => {
                   {/* Mother Phone Number */}
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Mother's Phone <span className="text-red-500">*</span>
+                      Mother's Phone
                     </label>
                     <input
                       type="tel"
                       {...register("motherPhoneNumber", {
-                        required: !isGuestOrBaby
-                          ? "Mother's phone number is required"
-                          : false,
                         pattern: {
                           value: phoneRegex,
                           message:
