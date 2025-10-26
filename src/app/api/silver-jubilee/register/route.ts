@@ -4,6 +4,10 @@ import {
   SilverJubileeFormData,
   SilverJubileeGuestSubmissionData,
   SilverJubileeParticipantCategory,
+  SilverJubileeGroup,
+  SilverJubileeGender,
+  SilverJubileeBloodGroup,
+  SilverJubileePaymentType,
 } from "@/types/silverJubilee";
 
 // Mock data storage (in a real app, this would be a database)
@@ -257,7 +261,11 @@ export async function POST(request: NextRequest) {
 
     // Validate HSC year
     if (
-      !validateHSCYear(formData.hscPassingYear, formData.participantCategory)
+      !validateHSCYear(
+        formData.hscPassingYear?.value || 0,
+        formData.participantCategory?.value ||
+          SilverJubileeParticipantCategory.ALUMNI
+      )
     ) {
       return NextResponse.json(
         {
@@ -298,7 +306,27 @@ export async function POST(request: NextRequest) {
     // Create new registration
     const newRegistration: SilverJubileeParticipant = {
       _id: `sj_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-      ...formData,
+      participantCategory:
+        formData.participantCategory?.value ||
+        SilverJubileeParticipantCategory.ALUMNI,
+      fullName: formData.fullName,
+      phoneNumber: formData.phoneNumber,
+      alternativePhoneNumber: formData.alternativePhoneNumber,
+      email: formData.email,
+      hscPassingYear: formData.hscPassingYear?.value || 0,
+      group: formData.group?.value || SilverJubileeGroup.SCIENCE,
+      gender: formData.gender?.value || SilverJubileeGender.MALE,
+      bloodGroup:
+        formData.bloodGroup?.value || SilverJubileeBloodGroup.DONT_KNOW,
+      paymentType: formData.paymentType?.value || SilverJubileePaymentType.CASH,
+      amount: formData.amount,
+      comments: formData.comments,
+      fatherName: formData.fatherName,
+      fatherPhoneNumber: formData.fatherPhoneNumber,
+      fatherOccupation: formData.fatherOccupation,
+      motherName: formData.motherName,
+      motherPhoneNumber: formData.motherPhoneNumber,
+      motherOccupation: formData.motherOccupation,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };

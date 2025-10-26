@@ -97,46 +97,6 @@ export interface SilverJubileeParticipant {
   updatedAt?: string;
 }
 
-export interface SilverJubileeFormData {
-  // Participant Category
-  participantCategory: SilverJubileeParticipantCategory;
-
-  // Personal Information
-  fullName: string;
-  phoneNumber: string;
-  alternativePhoneNumber: string;
-  email: string;
-  hscPassingYear: number;
-  group: SilverJubileeGroup;
-  gender: SilverJubileeGender;
-  bloodGroup: SilverJubileeBloodGroup;
-  paymentType: SilverJubileePaymentType;
-  amount: number;
-  comments: string;
-  registeredUnder?: string;
-
-  // Parents Information
-  fatherName: string;
-  fatherPhoneNumber: string;
-  fatherOccupation: string;
-  motherName: string;
-  motherPhoneNumber: string;
-  motherOccupation: string;
-
-  // Guest Information (only for guests)
-  mainParticipantBatch: number;
-  mainParticipantGroup: SilverJubileeGroup;
-  mainParticipantId: string;
-  mainParticipantName: string;
-  guestName: string;
-  guestMobileNumber: string;
-  guestAmountType: SilverJubileeGuestAmountType;
-  guestAmount: number;
-
-  // Baby Information (only for babies)
-  babyAge: number;
-}
-
 export interface SilverJubileeGuestSubmissionData {
   participantCategory: SilverJubileeParticipantCategory;
   mainParticipantBatch: number;
@@ -162,4 +122,40 @@ export interface SilverJubileeBabySubmissionData {
   paymentType: string;
   comments?: string;
   registeredUnder?: string;
+}
+
+// Shared FormData interface for all Silver Jubilee form components
+// This matches the form structure used in SilverJubileeForm.tsx and its sub-components
+export interface SilverJubileeFormData {
+  participantCategory: {
+    value: SilverJubileeParticipantCategory;
+    label: string;
+  } | null;
+  hscPassingYear: { value: number; label: string } | null;
+  fullName: string;
+  phoneNumber: string;
+  alternativePhoneNumber: string;
+  email: string;
+  group: { value: SilverJubileeGroup; label: string } | null;
+  gender: { value: SilverJubileeGender; label: string } | null;
+  bloodGroup: { value: SilverJubileeBloodGroup; label: string } | null;
+  paymentType: { value: SilverJubileePaymentType; label: string } | null;
+  amount: number;
+  fatherName: string;
+  fatherPhoneNumber: string;
+  fatherOccupation: string;
+  motherName: string;
+  motherPhoneNumber: string;
+  motherOccupation: string;
+  // Guest/Baby fields
+  guestBatch: { value: number; label: string } | null;
+  guestGroup: { value: SilverJubileeGroup; label: string } | null;
+  mainParticipant: { id: string; name: string; phoneNumber: string } | null;
+  guestName: string;
+  relation: string;
+  guestPhoneNumber: string;
+  // Comments field for all types
+  comments: string;
+  // Registered Under field
+  registeredUnder: { id: string; name: string } | null;
 }

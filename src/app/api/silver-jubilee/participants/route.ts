@@ -141,9 +141,28 @@ export async function POST(request: NextRequest) {
       };
     } else {
       // For alumni/students, use all data
+      const formData = data as SilverJubileeFormData;
       newParticipant = {
         _id: (participants.length + 1).toString(),
-        ...(data as SilverJubileeFormData),
+        participantCategory:
+          formData.participantCategory?.value || ("Alumni" as any),
+        fullName: formData.fullName,
+        phoneNumber: formData.phoneNumber,
+        alternativePhoneNumber: formData.alternativePhoneNumber,
+        email: formData.email,
+        hscPassingYear: formData.hscPassingYear?.value || 0,
+        group: formData.group?.value || ("Science" as any),
+        gender: formData.gender?.value || ("Male" as any),
+        bloodGroup: formData.bloodGroup?.value || ("Don't know" as any),
+        paymentType: formData.paymentType?.value || ("Cash" as any),
+        amount: formData.amount,
+        comments: formData.comments,
+        fatherName: formData.fatherName,
+        fatherPhoneNumber: formData.fatherPhoneNumber,
+        fatherOccupation: formData.fatherOccupation,
+        motherName: formData.motherName,
+        motherPhoneNumber: formData.motherPhoneNumber,
+        motherOccupation: formData.motherOccupation,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       };
