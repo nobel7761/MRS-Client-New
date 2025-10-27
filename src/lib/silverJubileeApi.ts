@@ -97,6 +97,12 @@ export const silverJubileeApi = {
     return response.data;
   },
 
+  // Get comprehensive statistics
+  getStatistics: async () => {
+    const response = await client.get("/silver-jubilee/statistics");
+    return response.data;
+  },
+
   // Get participants by batch and group (for guest registration)
   getParticipantsByBatchAndGroup: async (
     batch: number,

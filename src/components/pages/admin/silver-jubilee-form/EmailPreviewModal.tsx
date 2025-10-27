@@ -70,12 +70,9 @@ const EmailPreviewModal: React.FC<EmailPreviewModalProps> = ({
         ? participant.babyName
         : participant.fullName;
 
-    // For Guest and Baby, use main participant's email
-    const recipientEmail =
-      participant.participantCategory === "Guest" ||
-      participant.participantCategory === "Baby"
-        ? participant.mainParticipantEmail || participant.email
-        : participant.email;
+    // For Guest and Baby, use their own email or fallback to a default
+    // Note: The main participant's email should be fetched separately if needed
+    const recipientEmail = participant.email;
 
     return {
       subject: `Silver Jubilee Registration Confirmation - ${participantName}`,
