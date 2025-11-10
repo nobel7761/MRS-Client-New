@@ -65,8 +65,8 @@ const HeroSection = () => {
           }}
         >
           <AnimatedButton
-            route="/representative-registration-reunion-2026"
-            text="রিপ্রেজেন্টেটিভ রেজিস্ট্রেশন করুন এখানে"
+            route="/silver-jubilee-registration"
+            text="রজতজয়ন্তীর রেজিস্ট্রেশন করুন এখানে"
             textColor="text-black"
             buttonBgColor="bg-secondary"
             iconBgColor="bg-primary"

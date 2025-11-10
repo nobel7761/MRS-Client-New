@@ -123,6 +123,7 @@ const SilverJubileeForm = () => {
       motherName: "",
       motherPhoneNumber: "",
       motherOccupation: "",
+      professionalDetails: "",
       guestBatch: null,
       guestGroup: null,
       mainParticipant: null,

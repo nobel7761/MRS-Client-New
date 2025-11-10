@@ -23,6 +23,7 @@ export function middleware(request: NextRequest) {
     "/team",
     "/blogs",
     "/representative-registration-reunion-2026",
+    "/silver-jubilee-registration",
     "/test-api",
   ];
 

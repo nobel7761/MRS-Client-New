@@ -64,6 +64,7 @@ export interface SilverJubileeParticipant {
   paymentType: SilverJubileePaymentType;
   amount: number;
   comments?: string;
+  professionalDetails?: string;
 
   // Parents Information
   fatherName: string;
@@ -141,6 +142,7 @@ export interface SilverJubileeFormData {
   bloodGroup: { value: SilverJubileeBloodGroup; label: string } | null;
   paymentType: { value: SilverJubileePaymentType; label: string } | null;
   amount: number;
+  professionalDetails?: string;
   fatherName: string;
   fatherPhoneNumber: string;
   fatherOccupation: string;
