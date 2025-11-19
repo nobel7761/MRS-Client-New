@@ -20,7 +20,10 @@ class DirectApiClient {
     endpoint: string,
     options: RequestInit = {}
   ): Promise<ApiResponse<T>> {
-    const token = Cookies.get("token");
+    // Try to get token from localStorage first (more reliable), then cookies
+    const token =
+      (typeof window !== "undefined" && localStorage.getItem("accessToken")) ||
+      Cookies.get("token");
 
     const headers: Record<string, string> = {
       "Content-Type": "application/json",

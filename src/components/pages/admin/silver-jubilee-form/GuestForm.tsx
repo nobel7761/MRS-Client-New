@@ -15,6 +15,7 @@ import {
   SilverJubileeParticipantCategory,
   SilverJubileeFormData,
 } from "@/types/silverJubilee";
+import ReactHookFormPhoneNumberField from "@/components/shared/Forms/ReactHookFormPhoneNumberField";
 
 // Types
 interface GuestFormProps {
@@ -485,28 +486,19 @@ export default function GuestForm({
                       use main participant phone number
                     </button>
                   </div>
-                  <input
-                    type="tel"
-                    {...register("guestPhoneNumber", {
+                  <ReactHookFormPhoneNumberField
+                    name="guestPhoneNumber"
+                    control={control}
+                    muiTelInputProps={{}}
+                    rules={{
                       required: "Phone number is required",
-                      pattern: {
-                        value: phoneRegex,
-                        message:
-                          "Invalid format. Use 01[3-9]XXXXXXXX or +8801[3-9]XXXXXXXX",
-                      },
-                    })}
-                    className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:border-transparent ${
-                      errors.guestPhoneNumber
-                        ? "border-red-500 focus:ring-red-500"
-                        : "border-gray-300 focus:ring-blue-500"
-                    }`}
-                    placeholder="01XXXXXXXXX"
+                    }}
+                    apiErrors={
+                      errors.guestPhoneNumber?.message
+                        ? [errors.guestPhoneNumber.message as string]
+                        : undefined
+                    }
                   />
-                  {errors.guestPhoneNumber && (
-                    <p className="mt-1 text-sm text-red-600">
-                      {errors.guestPhoneNumber.message}
-                    </p>
-                  )}
                 </div>
 
                 {/* Payment Type */}

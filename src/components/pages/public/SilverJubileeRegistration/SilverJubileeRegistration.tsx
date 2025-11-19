@@ -589,7 +589,7 @@ const SilverJubileeRegistration = () => {
 
     const basePayload = {
       comments: trimmedComments.length ? trimmedComments : undefined,
-      submittedFrom: "Public Page",
+      submittedFrom: "Not Paid",
     };
 
     let payload: Record<string, unknown> | undefined;

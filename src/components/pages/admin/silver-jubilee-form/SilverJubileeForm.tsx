@@ -344,6 +344,7 @@ const SilverJubileeForm = () => {
           bloodGroup: data.bloodGroup?.value,
           paymentType: data.paymentType?.value,
           amount: data.amount,
+          professionalDetails: data.professionalDetails || "",
           comments: data.comments || "",
           registeredUnder: data.registeredUnder?.id,
           fatherName: data.fatherName,

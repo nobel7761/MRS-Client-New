@@ -11,11 +11,12 @@ import { SilverJubileeParticipant } from "@/types/silverJubilee";
 import { useAuth } from "@/contexts/AuthContext";
 import { UserRole, UserType } from "@/types/auth";
 import { directApi } from "@/lib/directApi";
-import { FaEdit } from "react-icons/fa";
+import { FaEdit, FaCheck, FaDollarSign } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
 import EditDialog from "./EditDialog";
 import DeleteDialog from "./DeleteDialog";
 import EmailPreviewModal from "./EmailPreviewModal";
+import PaymentStatusUpdateDialog from "./PaymentStatusUpdateDialog";
 import { Button } from "@mui/material";
 
 const MUIDataTable = MUIDataTableImport as unknown as React.ComponentType<any>;
@@ -68,6 +69,11 @@ const ParticipantsList = () => {
   const [participantForEmail, setParticipantForEmail] =
     useState<SilverJubileeParticipant | null>(null);
 
+  // Payment Status Update Modal State
+  const [paymentStatusUpdateOpen, setPaymentStatusUpdateOpen] = useState(false);
+  const [participantForPaymentUpdate, setParticipantForPaymentUpdate] =
+    useState<SilverJubileeParticipant | null>(null);
+
   // Check if user can view secret code
   const canViewSecretCode =
     user?.role === UserRole.SUPER_ADMIN ||
@@ -78,9 +84,17 @@ const ParticipantsList = () => {
     user?.role === UserRole.SUPER_ADMIN ||
     (user?.role === UserRole.ADMIN && user?.userType === UserType.COLLECTOR);
 
+  // Check if user is super admin
+  const isSuperAdmin = user?.role === UserRole.SUPER_ADMIN;
+
   const fetchData = async () => {
     try {
       const response = await silverJubileeApi.getAllParticipants();
+      // Debug: Log first participant to check submittedFrom field
+      if (response && response.length > 0) {
+        console.log("Sample participant data:", response[0]);
+        console.log("submittedFrom value:", response[0].submittedFrom);
+      }
       setData(response);
     } catch (error) {
       console.error("Error fetching participants data:", error);
@@ -146,6 +160,23 @@ const ParticipantsList = () => {
     fetchData();
   };
 
+  // Payment Status Update Handlers
+  const handlePaymentStatusUpdateClick = (
+    participant: SilverJubileeParticipant
+  ) => {
+    setParticipantForPaymentUpdate(participant);
+    setPaymentStatusUpdateOpen(true);
+  };
+
+  const handlePaymentStatusUpdateClose = () => {
+    setPaymentStatusUpdateOpen(false);
+    setParticipantForPaymentUpdate(null);
+  };
+
+  const handlePaymentStatusUpdateSuccess = () => {
+    fetchData();
+  };
+
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("en-US", {
       year: "numeric",
@@ -162,6 +193,28 @@ const ParticipantsList = () => {
         filter: true,
         sort: true,
         customBodyRender: (value: string) => value || "-",
+      },
+    },
+    {
+      name: "submittedFrom",
+      label: "Status",
+      options: {
+        filter: true,
+        sort: true,
+        customBodyRender: (value: string, tableMeta: any) => {
+          const rowData = data[tableMeta.rowIndex];
+          // Get the actual value from rowData in case the column name doesn't match
+          const submittedFromValue = rowData?.submittedFrom || value;
+
+          // Handle both "Public Page" and "Not Paid" as "Not Paid" status
+          const isNotPaid =
+            submittedFromValue === "Public Page" ||
+            submittedFromValue === "Not Paid";
+          const isPaid = submittedFromValue === "Paid";
+
+          const status = isNotPaid ? "Not Paid" : isPaid ? "Paid" : "-";
+          return <span>{status}</span>;
+        },
       },
     },
     {
@@ -484,19 +537,52 @@ const ParticipantsList = () => {
         sort: false,
         customBodyRender: (value: string, tableMeta: any) => {
           const rowData = data[tableMeta.rowIndex];
+          const submittedFromValue = rowData?.submittedFrom;
+          const isNotPaid =
+            submittedFromValue === "Public Page" ||
+            submittedFromValue === "Not Paid";
+
           return (
             <div className="flex items-center gap-4">
               {/* Edit Icon */}
               <FaEdit
                 className="text-indigo-500 text-xl cursor-pointer hover:text-indigo-600"
                 onClick={() => handleEditClick(value)}
+                title="Edit Participant"
               />
 
               {/* Delete/Bin Icon */}
               <MdDelete
                 className="text-red-500 text-xl cursor-pointer hover:text-red-600"
                 onClick={() => handleDeleteClick(rowData)}
+                title="Delete Participant"
               />
+
+              {/* Mark as Paid Button - Only for super admin when status is Not Paid */}
+              {isNotPaid && isSuperAdmin && (
+                <Button
+                  variant="outlined"
+                  size="small"
+                  color="success"
+                  startIcon={<FaCheck />}
+                  onClick={() => handlePaymentStatusUpdateClick(rowData)}
+                  sx={{
+                    textTransform: "none",
+                    fontSize: "0.75rem",
+                    padding: "4px 12px",
+                    minWidth: "auto",
+                    borderColor: "#10b981",
+                    color: "#10b981",
+                    "&:hover": {
+                      borderColor: "#059669",
+                      backgroundColor: "#ecfdf5",
+                    },
+                  }}
+                  title="Mark as Paid"
+                >
+                  Mark as Paid
+                </Button>
+              )}
             </div>
           );
         },
@@ -561,6 +647,14 @@ const ParticipantsList = () => {
         onClose={handleEmailPreviewClose}
         participant={participantForEmail}
         onEmailSent={handleEmailSent}
+      />
+
+      {/* Payment Status Update Dialog */}
+      <PaymentStatusUpdateDialog
+        open={paymentStatusUpdateOpen}
+        onClose={handlePaymentStatusUpdateClose}
+        participant={participantForPaymentUpdate}
+        onSuccess={handlePaymentStatusUpdateSuccess}
       />
     </div>
   );

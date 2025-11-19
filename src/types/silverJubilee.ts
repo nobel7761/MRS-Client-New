@@ -93,6 +93,9 @@ export interface SilverJubileeParticipant {
   // Registered Under (Collector)
   registeredUnder?: string;
 
+  // Submission source
+  submittedFrom?: string;
+
   // Metadata
   createdAt?: string;
   updatedAt?: string;

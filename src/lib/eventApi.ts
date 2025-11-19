@@ -15,14 +15,20 @@ const eventApi = axios.create({
   headers: {
     "Content-Type": "application/json",
   },
+  withCredentials: true, // IMPORTANT: Required for cookies to work
 });
 
 // Add auth token to requests
 eventApi.interceptors.request.use((config) => {
-  const token = localStorage.getItem("token");
+  // Try to get token from localStorage first (more reliable), then cookies
+  const token =
+    (typeof window !== "undefined" && localStorage.getItem("accessToken")) ||
+    null;
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
+  // Ensure credentials are included for cookies
+  config.withCredentials = true;
   return config;
 });
 
