@@ -24,6 +24,7 @@ export function middleware(request: NextRequest) {
     "/blogs",
     "/representative-registration-reunion-2026",
     "/silver-jubilee-registration",
+    "/souvenir-content-submission",
     "/test-api",
   ];
 

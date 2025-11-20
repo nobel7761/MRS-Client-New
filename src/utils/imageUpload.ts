@@ -21,6 +21,8 @@ export const SUPPORTED_IMAGE_TYPES = [
   "image/bmp",
   "image/tiff",
   "image/ico",
+  "image/heic",
+  "image/heif",
 ];
 
 export const SUPPORTED_VIDEO_TYPES = [
@@ -179,5 +181,3 @@ export const validateFileForUpload = (
     fileSizeMB,
   };
 };
-
-

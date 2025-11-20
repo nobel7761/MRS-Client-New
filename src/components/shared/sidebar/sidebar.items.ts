@@ -54,6 +54,10 @@ export const getSidebarItems = (
             name: "Participants List",
             href: "/admin/silver-jubilee/participants",
           },
+          {
+            name: "Souvenir Management",
+            href: "/admin/silver-jubilee/souvenir-management",
+          },
         ],
       });
     }
@@ -121,6 +125,10 @@ export const getSidebarItems = (
           name: "Participants List",
           href: "/admin/silver-jubilee/participants",
         },
+        {
+          name: "Souvenir Management",
+          href: "/admin/silver-jubilee/souvenir-management",
+        },
       ],
     });
   }
@@ -142,6 +150,10 @@ export const getSidebarItems = (
         {
           name: "Participants List",
           href: "/admin/silver-jubilee/participants",
+        },
+        {
+          name: "Souvenir Management",
+          href: "/admin/silver-jubilee/souvenir-management",
         },
       ],
     });

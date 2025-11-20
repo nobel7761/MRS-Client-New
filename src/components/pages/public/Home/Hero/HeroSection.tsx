@@ -57,7 +57,7 @@ const HeroSection = () => {
         </div>
       </div>
 
-      <div className="flex justify-center items-center py-16">
+      <div className="flex flex-col justify-center items-center py-16 gap-4">
         <div
           className="relative"
           style={{
@@ -75,6 +75,39 @@ const HeroSection = () => {
             showBackgroundImage={false}
           />
           <div
+            className="hidden md:block"
+            style={{
+              content: "",
+              position: "absolute",
+              right: "-110px",
+              top: "-20px",
+              background: `url(${heroButtonIcon.src}) no-repeat`,
+              backgroundPosition: "center center",
+              backgroundSize: "cover",
+              width: "100px",
+              height: "70px",
+              animation: "ctaarrow 2s infinite linear",
+            }}
+          />
+        </div>
+        <div
+          className="relative"
+          style={{
+            position: "relative",
+          }}
+        >
+          <AnimatedButton
+            route="/souvenir-content-submission"
+            text="স্মরণিকা তে লেখা যুক্ত করুন"
+            textColor="text-black"
+            buttonBgColor="bg-secondary"
+            iconBgColor="bg-primary"
+            hoverButtonBgColor="bg-white"
+            hoverIconBgColor="bg-black"
+            showBackgroundImage={false}
+          />
+          <div
+            className="hidden md:block"
             style={{
               content: "",
               position: "absolute",
