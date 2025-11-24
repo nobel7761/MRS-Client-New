@@ -79,18 +79,10 @@ const categoryOptions = [
   { value: "article", label: "প্রবন্ধ/নিবন্ধ (Article)" },
   { value: "batch-message", label: "শুভেচ্ছা বার্তা (Batch Message)" },
   { value: "one-liner", label: "এক লাইনের বার্তা (One-Liner)" },
-  { value: "artwork", label: "চিত্র/আর্টवर्क (Artwork)" },
-  { value: "batch-photo", label: "ব্যাচ গ্রুপ ছবি (Batch Photo)" },
-  {
-    value: "old-campus-photo",
-    label: "ক্যাম্পাস পুরোনো ছবি (Old Campus Photo)",
-  },
-  { value: "new-campus-photo", label: "ক্যাম্পাস নতুন ছবি (New Photos)" },
   { value: "humor-comic", label: "Humor / Comic Corner" },
   { value: "quote-thought", label: "Quote / Thought" },
   { value: "alumni-spotlight", label: "Alumni Spotlight Profile" },
   { value: "teacher-tribute", label: "Teacher Tribute" },
-  { value: "interview-suggestion", label: "Interview Suggestion" },
   { value: "sponsor-message", label: "Sponsor Message (For Sponsors)" },
 ];
 

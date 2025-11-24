@@ -96,15 +96,10 @@ const SouvenirList = () => {
       article: "প্রবন্ধ/নিবন্ধ",
       "batch-message": "শুভেচ্ছা বার্তা",
       "one-liner": "এক লাইনের বার্তা",
-      artwork: "চিত্র/আর্টवर्क",
-      "batch-photo": "ব্যাচ গ্রুপ ছবি",
-      "old-campus-photo": "ক্যাম্পাস পুরোনো ছবি",
-      "new-campus-photo": "ক্যাম্পাস নতুন ছবি",
       "humor-comic": "Humor / Comic Corner",
       "quote-thought": "Quote / Thought",
       "alumni-spotlight": "Alumni Spotlight Profile",
       "teacher-tribute": "Teacher Tribute",
-      "interview-suggestion": "Interview Suggestion",
       "sponsor-message": "Sponsor Message",
     };
     return categoryMap[category] || category;

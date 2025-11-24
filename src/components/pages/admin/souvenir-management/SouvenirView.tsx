@@ -16,15 +16,10 @@ const getCategoryLabel = (category: string) => {
     article: "প্রবন্ধ/নিবন্ধ (Article)",
     "batch-message": "শুভেচ্ছা বার্তা (Batch Message)",
     "one-liner": "এক লাইনের বার্তা (One-Liner)",
-    artwork: "চিত্র/আর্টवर्क (Artwork)",
-    "batch-photo": "ব্যাচ গ্রুপ ছবি (Batch Photo)",
-    "old-campus-photo": "ক্যাম্পাস পুরোনো ছবি (Old Campus Photo)",
-    "new-campus-photo": "ক্যাম্পাস নতুন ছবি (New Photos)",
     "humor-comic": "Humor / Comic Corner",
     "quote-thought": "Quote / Thought",
     "alumni-spotlight": "Alumni Spotlight Profile",
     "teacher-tribute": "Teacher Tribute",
-    "interview-suggestion": "Interview Suggestion",
     "sponsor-message": "Sponsor Message (For Sponsors)",
   };
   return categoryMap[category] || category;
