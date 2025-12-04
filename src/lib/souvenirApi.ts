@@ -7,8 +7,10 @@ export interface SouvenirData {
   group: string;
   phoneNumber: string;
   email: string;
+  professionalDetails?: string;
   content: string;
   photo?: File;
+  photos?: File[]; // For photo-gallery category
 }
 
 export interface Souvenir {
@@ -19,7 +21,9 @@ export interface Souvenir {
   group: string;
   phoneNumber: string;
   email: string;
-  photoUrl: string;
+  professionalDetails?: string;
+  photoUrl?: string;
+  photoUrls?: string[]; // For photo-gallery category
   content: string;
   createdAt: string;
   updatedAt: string;
@@ -46,11 +50,27 @@ export interface SouvenirFilters {
 
 export const souvenirApi = {
   // Create a new souvenir with photo upload
-  create: async (data: SouvenirData, photoFile: File): Promise<Souvenir> => {
+  create: async (
+    data: SouvenirData,
+    photoFile?: File,
+    photoFiles?: File[]
+  ): Promise<Souvenir> => {
     const formData = new FormData();
 
-    // Append photo file - IMPORTANT: field name must be 'photo'
-    formData.append("photo", photoFile);
+    // Handle photo uploads based on category
+    if (
+      data.category === "photo-gallery" &&
+      photoFiles &&
+      photoFiles.length > 0
+    ) {
+      // For photo gallery: append multiple photos with field name "photos[]"
+      photoFiles.forEach((file) => {
+        formData.append("photos[]", file);
+      });
+    } else if (photoFile) {
+      // For other categories: append single photo with field name "photo"
+      formData.append("photo", photoFile);
+    }
 
     // Append text fields
     formData.append("category", data.category);
@@ -59,6 +79,9 @@ export const souvenirApi = {
     formData.append("group", data.group);
     formData.append("phoneNumber", data.phoneNumber);
     formData.append("email", data.email);
+    if (data.professionalDetails) {
+      formData.append("professionalDetails", data.professionalDetails);
+    }
     formData.append("content", data.content); // HTML string from rich text editor
 
     const response = await client.post("/souvenir-management", formData, {
