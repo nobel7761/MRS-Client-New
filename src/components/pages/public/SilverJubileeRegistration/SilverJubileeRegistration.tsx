@@ -190,7 +190,10 @@ const lifetimeMembershipYears = Array.from(
   (_, index) => 2003 + index
 );
 
-const guestBatchOptions = alumniYears;
+const guestBatchOptions = Array.from(
+  { length: 2027 - 2003 + 1 },
+  (_, index) => 2003 + index
+);
 
 type DropdownOption<Value> = {
   value: Value;
