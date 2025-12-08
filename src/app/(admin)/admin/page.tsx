@@ -130,6 +130,14 @@ interface SilverJubileeStatistics {
       count: number;
       amount: number;
     };
+    paidDonation: {
+      count: number;
+      amount: number;
+    };
+    notPaidDonation: {
+      count: number;
+      amount: number;
+    };
   };
 }
 
@@ -324,7 +332,7 @@ export default function AdminDashboard() {
             Silver Jubilee Dashboard
           </h1>
 
-          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-2">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -366,7 +374,7 @@ export default function AdminDashboard() {
                   <div className="ml-5 w-0 flex-1">
                     <dl>
                       <dt className="text-sm font-medium text-primary truncate">
-                        Total Revenue
+                        Total Money
                       </dt>
                       <dd className="flex items-baseline">
                         <div className="text-2xl font-semibold text-primary">
@@ -380,41 +388,13 @@ export default function AdminDashboard() {
                 </div>
               </div>
             </motion.div>
+          </div>
 
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-2 pt-5">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.3 }}
-              className="bg-white overflow-hidden shadow rounded-lg"
-            >
-              <div className="p-5">
-                <div className="flex items-center">
-                  <div className="flex-shrink-0">
-                    <FiTrendingUp className="h-6 w-6 text-primary" />
-                  </div>
-                  <div className="ml-5 w-0 flex-1">
-                    <dl>
-                      <dt className="text-sm font-medium text-primary truncate">
-                        Avg per Participant
-                      </dt>
-                      <dd className="flex items-baseline">
-                        <div className="text-2xl font-semibold text-primary">
-                          {formatCurrency(
-                            silverJubileeStats?.overview
-                              .averageAmountPerParticipant || 0
-                          )}
-                        </div>
-                      </dd>
-                    </dl>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.4 }}
               className="bg-white overflow-hidden shadow rounded-lg"
             >
               <div className="p-5">
@@ -437,69 +417,11 @@ export default function AdminDashboard() {
                 </div>
               </div>
             </motion.div>
-          </div>
-
-          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 pt-5">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.5 }}
-              className="bg-white overflow-hidden shadow rounded-lg"
-            >
-              <div className="p-5">
-                <div className="flex items-center">
-                  <div className="flex-shrink-0">
-                    <FiUsers className="h-6 w-6 text-primary" />
-                  </div>
-                  <div className="ml-5 w-0 flex-1">
-                    <dl>
-                      <dt className="text-sm font-medium text-primary truncate">
-                        Guests
-                      </dt>
-                      <dd className="flex items-baseline">
-                        <div className="text-2xl font-semibold text-primary">
-                          {silverJubileeStats?.guestBabyStatistics
-                            .guestsWithMainParticipant || 0}
-                        </div>
-                      </dd>
-                    </dl>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
 
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.6 }}
-              className="bg-white overflow-hidden shadow rounded-lg"
-            >
-              <div className="p-5">
-                <div className="flex items-center">
-                  <div className="flex-shrink-0">
-                    <FiUser className="h-6 w-6 text-primary" />
-                  </div>
-                  <div className="ml-5 w-0 flex-1">
-                    <dl>
-                      <dt className="text-sm font-medium text-primary truncate">
-                        Babies
-                      </dt>
-                      <dd className="flex items-baseline">
-                        <div className="text-2xl font-semibold text-primary">
-                          {silverJubileeStats?.guestBabyStatistics
-                            .babiesWithMainParticipant || 0}
-                        </div>
-                      </dd>
-                    </dl>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.8 }}
+              transition={{ duration: 0.5, delay: 0.4 }}
               className="bg-white overflow-hidden shadow rounded-lg"
             >
               <div className="p-5">
@@ -562,6 +484,8 @@ export default function AdminDashboard() {
                               (silverJubileeStats.paymentStatus.paidGuest
                                 ?.amount || 0) +
                               (silverJubileeStats.paymentStatus.paidBaby
+                                ?.amount || 0) +
+                              (silverJubileeStats.paymentStatus.paidDonation
                                 ?.amount || 0)
                           )}
                         </span>
@@ -603,6 +527,8 @@ export default function AdminDashboard() {
                               (silverJubileeStats.paymentStatus.notPaidGuest
                                 ?.amount || 0) +
                               (silverJubileeStats.paymentStatus.notPaidBaby
+                                ?.amount || 0) +
+                              (silverJubileeStats.paymentStatus.notPaidDonation
                                 ?.amount || 0)
                           )}
                         </span>
@@ -617,7 +543,7 @@ export default function AdminDashboard() {
                 <h2 className="text-xl font-bold text-white mb-4">
                   Paid Participants by Category
                 </h2>
-                <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-5">
+                <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
                   <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -772,6 +698,37 @@ export default function AdminDashboard() {
                       </div>
                     </div>
                   </motion.div>
+
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, delay: 1.37 }}
+                    className="bg-green-50 overflow-hidden shadow rounded-lg border-2 border-green-200"
+                  >
+                    <div className="p-5">
+                      <h3 className="text-sm font-semibold text-green-800 mb-2">
+                        Paid Donation
+                      </h3>
+                      <div className="space-y-2">
+                        <div className="flex justify-between">
+                          <span className="text-xs text-gray-600">Count:</span>
+                          <span className="font-semibold text-green-700">
+                            {silverJubileeStats.paymentStatus.paidDonation
+                              ?.count || 0}
+                          </span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-xs text-gray-600">Amount:</span>
+                          <span className="font-semibold text-green-700 text-sm">
+                            {formatCurrency(
+                              silverJubileeStats.paymentStatus.paidDonation
+                                ?.amount || 0
+                            )}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </motion.div>
                 </div>
               </div>
 
@@ -780,7 +737,7 @@ export default function AdminDashboard() {
                 <h2 className="text-xl font-bold text-white mb-4">
                   Not Paid Participants by Category
                 </h2>
-                <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-5">
+                <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
                   <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -928,6 +885,37 @@ export default function AdminDashboard() {
                           <span className="font-semibold text-red-700 text-sm">
                             {formatCurrency(
                               silverJubileeStats.paymentStatus.notPaidBaby
+                                ?.amount || 0
+                            )}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </motion.div>
+
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, delay: 1.87 }}
+                    className="bg-red-50 overflow-hidden shadow rounded-lg border-2 border-red-200"
+                  >
+                    <div className="p-5">
+                      <h3 className="text-sm font-semibold text-red-800 mb-2">
+                        Not Paid Donation
+                      </h3>
+                      <div className="space-y-2">
+                        <div className="flex justify-between">
+                          <span className="text-xs text-gray-600">Count:</span>
+                          <span className="font-semibold text-red-700">
+                            {silverJubileeStats.paymentStatus.notPaidDonation
+                              ?.count || 0}
+                          </span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-xs text-gray-600">Amount:</span>
+                          <span className="font-semibold text-red-700 text-sm">
+                            {formatCurrency(
+                              silverJubileeStats.paymentStatus.notPaidDonation
                                 ?.amount || 0
                             )}
                           </span>

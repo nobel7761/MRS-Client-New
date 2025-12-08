@@ -17,6 +17,8 @@ import {
 } from "@/types/silverJubilee";
 import { silverJubileeApi } from "@/lib/silverJubileeApi";
 import { getCollectors, Collector } from "@/lib/authApi";
+import { useAuth } from "@/contexts/AuthContext";
+import { UserRole } from "@/types/auth";
 
 // Icon Components
 const ChevronUpDownIcon = () => (
@@ -52,7 +54,8 @@ const CheckIcon = () => (
 // Use shared FormData type from types/silverJubilee
 type FormData = SilverJubileeFormData;
 
-const participantCategories = [
+// Base participant categories (available to all admins)
+const baseParticipantCategories = [
   { value: SilverJubileeParticipantCategory.ALUMNI, label: "Alumni" },
   { value: SilverJubileeParticipantCategory.STUDENT, label: "Student" },
   { value: SilverJubileeParticipantCategory.GUEST, label: "Guest" },
@@ -62,6 +65,12 @@ const participantCategories = [
     label: "Lifetime Membership",
   },
 ];
+
+// Donation category (only for super admin)
+const donationCategory = {
+  value: SilverJubileeParticipantCategory.DONATION,
+  label: "Donation",
+};
 
 // Generate HSC Passing Years for Alumni (2003-2025)
 const alumniYears = Array.from({ length: 2025 - 2003 + 1 }, (_, i) => ({
@@ -85,6 +94,9 @@ const lifetimeMembershipYears = Array.from(
 );
 
 const SilverJubileeForm = () => {
+  const { user } = useAuth();
+  const isSuperAdmin = user?.role === UserRole.SUPER_ADMIN;
+
   const [showPreviewModal, setShowPreviewModal] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isAmountEditable, setIsAmountEditable] = useState(false);
@@ -95,6 +107,11 @@ const SilverJubileeForm = () => {
   const [noParticipantsFound, setNoParticipantsFound] = useState(false);
   const [collectors, setCollectors] = useState<Collector[]>([]);
   const [isLoadingCollectors, setIsLoadingCollectors] = useState(false);
+
+  // Get participant categories based on user role
+  const participantCategories = isSuperAdmin
+    ? [...baseParticipantCategories, donationCategory]
+    : baseParticipantCategories;
 
   const {
     register,
@@ -148,7 +165,8 @@ const SilverJubileeForm = () => {
     selectedCategory?.value === SilverJubileeParticipantCategory.ALUMNI ||
     selectedCategory?.value === SilverJubileeParticipantCategory.STUDENT ||
     selectedCategory?.value ===
-      SilverJubileeParticipantCategory.LIFETIMEMEMBERSHIP;
+      SilverJubileeParticipantCategory.LIFETIMEMEMBERSHIP ||
+    selectedCategory?.value === SilverJubileeParticipantCategory.DONATION;
 
   // Separate checks for Guest and Baby
   const isGuest =
@@ -164,6 +182,13 @@ const SilverJubileeForm = () => {
         SilverJubileeParticipantCategory.LIFETIMEMEMBERSHIP
       ) {
         setValue("amount", 5000);
+        setIsAmountEditable(false);
+      } else if (
+        selectedCategory.value === SilverJubileeParticipantCategory.DONATION
+      ) {
+        // For donation, amount is editable and starts at 0 (super admin will set it)
+        setValue("amount", 0);
+        setIsAmountEditable(true);
       } else if (
         selectedCategory.value === SilverJubileeParticipantCategory.ALUMNI
       ) {
@@ -172,10 +197,12 @@ const SilverJubileeForm = () => {
         } else if (selectedYear.value >= 2022 && selectedYear.value <= 2025) {
           setValue("amount", 1600);
         }
+        setIsAmountEditable(false);
       } else if (
         selectedCategory.value === SilverJubileeParticipantCategory.STUDENT
       ) {
         setValue("amount", 1400);
+        setIsAmountEditable(false);
       }
     }
   }, [selectedCategory, selectedYear, setValue]);
@@ -280,7 +307,8 @@ const SilverJubileeForm = () => {
       return studentYears;
     } else if (
       selectedCategory?.value ===
-      SilverJubileeParticipantCategory.LIFETIMEMEMBERSHIP
+        SilverJubileeParticipantCategory.LIFETIMEMEMBERSHIP ||
+      selectedCategory?.value === SilverJubileeParticipantCategory.DONATION
     ) {
       return lifetimeMembershipYears;
     }
@@ -677,6 +705,25 @@ const SilverJubileeForm = () => {
           {/* Lifetime Membership Form */}
           {selectedCategory?.value ===
             SilverJubileeParticipantCategory.LIFETIMEMEMBERSHIP &&
+            selectedYear && (
+              <LifetimeMembershipForm
+                control={control}
+                register={register}
+                watch={watch}
+                errors={errors}
+                setValue={setValue}
+                selectedYear={selectedYear}
+                isAmountEditable={isAmountEditable}
+                setIsAmountEditable={setIsAmountEditable}
+                collectors={collectors}
+                isLoadingCollectors={isLoadingCollectors}
+                onPreview={handlePreview}
+              />
+            )}
+
+          {/* Donation Form - Uses same form as Lifetime Membership */}
+          {selectedCategory?.value ===
+            SilverJubileeParticipantCategory.DONATION &&
             selectedYear && (
               <LifetimeMembershipForm
                 control={control}

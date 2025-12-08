@@ -33,7 +33,10 @@ const validateHSCYear = (
     return year >= 2003 && year <= 2025;
   } else if (category === SilverJubileeParticipantCategory.STUDENT) {
     return year >= 2026 && year <= 2027;
-  } else if (category === SilverJubileeParticipantCategory.LIFETIMEMEMBERSHIP) {
+  } else if (
+    category === SilverJubileeParticipantCategory.LIFETIMEMEMBERSHIP ||
+    category === SilverJubileeParticipantCategory.DONATION
+  ) {
     return year >= 2003 && year <= 2027;
   }
   return true;
@@ -165,7 +168,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Handle Alumni/Student/Lifetime Membership registration
+    // Handle Alumni/Student/Lifetime Membership/Donation registration
     const formData = data as SilverJubileeFormData;
 
     // Validate required fields

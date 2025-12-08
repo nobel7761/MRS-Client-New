@@ -21,6 +21,8 @@ import EditStudentForm from "./EditStudentForm";
 import EditGuestForm from "./EditGuestForm";
 import EditBabyForm from "./EditBabyForm";
 import EditLifetimeMembershipForm from "./EditLifetimeMembershipForm";
+import { useAuth } from "@/contexts/AuthContext";
+import { UserRole } from "@/types/auth";
 
 interface EditDialogProps {
   open: boolean;
@@ -35,6 +37,9 @@ const EditDialog = ({
   participant,
   onSuccess,
 }: EditDialogProps) => {
+  const { user } = useAuth();
+  const isSuperAdmin = user?.role === UserRole.SUPER_ADMIN;
+
   const [formData, setFormData] = useState<Partial<SilverJubileeParticipant>>(
     {}
   );
@@ -112,6 +117,13 @@ const EditDialog = ({
             setFormData={setFormData}
           />
         );
+      case SilverJubileeParticipantCategory.DONATION:
+        return (
+          <EditLifetimeMembershipForm
+            formData={formData}
+            setFormData={setFormData}
+          />
+        );
       default:
         return null;
     }
@@ -153,6 +165,11 @@ const EditDialog = ({
               >
                 Lifetime Membership
               </MenuItem>
+              {isSuperAdmin && (
+                <MenuItem value={SilverJubileeParticipantCategory.DONATION}>
+                  Donation
+                </MenuItem>
+              )}
             </Select>
           </FormControl>
 
