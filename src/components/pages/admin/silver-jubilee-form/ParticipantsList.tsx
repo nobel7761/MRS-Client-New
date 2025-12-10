@@ -11,11 +11,12 @@ import { SilverJubileeParticipant } from "@/types/silverJubilee";
 import { useAuth } from "@/contexts/AuthContext";
 import { UserRole, UserType } from "@/types/auth";
 import { directApi } from "@/lib/directApi";
-import { FaEdit, FaCheck, FaDollarSign } from "react-icons/fa";
+import { FaEdit, FaCheck, FaDollarSign, FaEye } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
 import EditDialog from "./EditDialog";
 import DeleteDialog from "./DeleteDialog";
 import EmailPreviewModal from "./EmailPreviewModal";
+import ViewSentEmailModal from "./ViewSentEmailModal";
 import PaymentStatusUpdateDialog from "./PaymentStatusUpdateDialog";
 import { Button } from "@mui/material";
 
@@ -67,6 +68,11 @@ const ParticipantsList = () => {
   // Email Preview Modal State
   const [emailPreviewOpen, setEmailPreviewOpen] = useState(false);
   const [participantForEmail, setParticipantForEmail] =
+    useState<SilverJubileeParticipant | null>(null);
+
+  // View Sent Email Modal State
+  const [viewSentEmailOpen, setViewSentEmailOpen] = useState(false);
+  const [participantForViewEmail, setParticipantForViewEmail] =
     useState<SilverJubileeParticipant | null>(null);
 
   // Payment Status Update Modal State
@@ -158,6 +164,17 @@ const ParticipantsList = () => {
 
   const handleEmailSent = () => {
     fetchData();
+  };
+
+  // View Sent Email Modal Handlers
+  const handleViewSentEmail = (participant: SilverJubileeParticipant) => {
+    setParticipantForViewEmail(participant);
+    setViewSentEmailOpen(true);
+  };
+
+  const handleViewSentEmailClose = () => {
+    setViewSentEmailOpen(false);
+    setParticipantForViewEmail(null);
   };
 
   // Payment Status Update Handlers
@@ -312,6 +329,7 @@ const ParticipantsList = () => {
       options: {
         filter: true,
         sort: true,
+        display: false, // Hidden by default
         customBodyRender: (value: string, tableMeta: any) => {
           const rowData = data[tableMeta.rowIndex];
           if (
@@ -500,9 +518,19 @@ const ParticipantsList = () => {
       options: {
         filter: true,
         sort: false,
-        display: false,
         customBodyRender: (value: boolean, tableMeta: any) => {
           const rowData = data[tableMeta.rowIndex];
+          // Check if status is "Not Paid"
+          const submittedFromValue = rowData?.submittedFrom;
+          const isNotPaid =
+            submittedFromValue === "Public Page" ||
+            submittedFromValue === "Not Paid";
+
+          // Don't show anything if status is "Not Paid"
+          if (isNotPaid) {
+            return null;
+          }
+
           if (value === false) {
             return (
               <Button
@@ -521,9 +549,16 @@ const ParticipantsList = () => {
             );
           }
           return (
-            <span className="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-semibold bg-green-100 text-green-800">
-              Sent
-            </span>
+            <div className="inline-flex items-center gap-2">
+              <FaEye
+                className="text-blue-500 text-lg cursor-pointer hover:text-blue-600"
+                onClick={() => handleViewSentEmail(rowData)}
+                title="View Sent Email"
+              />
+              <span className="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-semibold bg-green-100 text-green-800">
+                Sent
+              </span>
+            </div>
           );
         },
       },
@@ -647,6 +682,13 @@ const ParticipantsList = () => {
         onClose={handleEmailPreviewClose}
         participant={participantForEmail}
         onEmailSent={handleEmailSent}
+      />
+
+      {/* View Sent Email Modal */}
+      <ViewSentEmailModal
+        open={viewSentEmailOpen}
+        onClose={handleViewSentEmailClose}
+        participant={participantForViewEmail}
       />
 
       {/* Payment Status Update Dialog */}
